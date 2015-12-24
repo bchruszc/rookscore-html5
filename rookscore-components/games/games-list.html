@@ -29,7 +29,6 @@
 
 
     <template>
-        <index-db db="{{db}}"></index-db>
         <game-controller id="gameController" db="[[db]]" values="{{games}}"></game-controller>
 
 
@@ -78,7 +77,7 @@
 
 
             buildURLForGame: function(game) {
-                return "/game.html#!/" + game.game_id;
+                return "/rookscore2.html#!/games/" + game.game_id;
             },
 
             orderGames: function(game1, game2) {

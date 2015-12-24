@@ -8,7 +8,6 @@
 
 
     <template>
-        <index-db db="{{db}}"></index-db>
 
         <player-controller values="{{players}}" db="{{db}}">
         </player-controller>
@@ -40,7 +39,7 @@
         Polymer({
             is: 'game-setup',
             properties: {
-                players: Array,
+                players: Object,
 
                 selectedPlayers: {
                     type: Object
@@ -81,7 +80,7 @@
 
                 this.$.gameController.add(game, function(newGameID) {
                     //do stuff with this id.
-                    window.location.href = "/game.html#!/" + newGameID;
+                    window.location.href = "/rookscore2.html#!/games/" + newGameID;
                 });
 
             }
