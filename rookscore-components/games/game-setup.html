@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<link rel="import" href="../../imports.html">
+
+<dom-module id="game-setup">
+
+
+    <template>
+        <index-db db="{{db}}"></index-db>
+
+        <player-controller values="{{players}}" db="{{db}}">
+        </player-controller>
+
+
+        <game-controller id="gameController" db="{{db}}">
+        </game-controller>
+
+
+
+        <h1>Select Players</h1>
+
+        <iron-list id="itemsList" items="[[players]]" selected-items="{{selectedPlayers}}" as="player" selection-enabled multi-selection>
+            <template>
+                <selectable-player player="[[player]]" selected="[[selected]]"></selectable-player>
+            </template>
+        </iron-list>
+
+        <div class="horizontal layout">
+            <div class="flex"></div>
+            <paper-fab icon="icons:forward" on-click="startGameClicked" disabled="{{startGameDisabled(selectedPlayers.length)}}">Test!</paper-fab>
+        </div>
+
+
+    </template>
+
+
+    <script>
+        Polymer({
+            is: 'game-setup',
+            properties: {
+                players: Array,
+
+                selectedPlayers: {
+                    type: Object
+                }
+            },
+
+
+            startGameDisabled: function() {
+                if(this.selectedPlayers.length >= 4 && this.selectedPlayers.length <= 6){
+                    return false;
+                } else {
+                    return true;
+                }
+            },
+            
+            startGameClicked: function() {
+
+                //build a new game definition
+                //add to game store
+                //jump to game-in-progress view
+
+                var game = {
+                    'created_date': "now", //fix!
+                    'entered_date': "now", //also fix. dont' set until upload
+                    scores: [],
+                    bids: []
+                };
+
+
+                for (var i = 0; i < this.selectedPlayers.length; i++) {
+                    game.scores.push({
+                        'player': this.selectedPlayers[i],
+                        'score': 0,
+                        'made_bid': false
+                    });
+                }
+
+
+                this.$.gameController.add(game, function(newGameID) {
+                    //do stuff with this id.
+                    window.location.href = "/games.html#!/games/" + newGameID;
+                });
+
+            }
+        });
+    </script>
+
+</dom-module>

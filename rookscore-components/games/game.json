@@ -1,0 +1,22 @@
+{
+    entered_date: string,
+    played_date: string,
+    game_id: number,
+    scores: [{
+        "player": Player,
+        "score": number
+        "made_bid": boolean
+    }],
+
+
+    bids: [{
+        "caller": 4,
+        "partners": [20, 22],
+        "opponents": [21, 19, 23],
+        "points_bid": 150,
+        "points_made": 180,
+        "hand_number": 1
+    }]
+
+
+}

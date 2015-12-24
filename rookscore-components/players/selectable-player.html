@@ -1,0 +1,73 @@
+<link rel="import" href="../../imports.html">
+
+<dom-module id="selectable-player">
+
+
+    <template>
+
+
+        <style>
+            :host {
+                --paper-badge-width: 40px;
+                --paper-badge-height: 40px;
+                --paper-badge: {
+                    font-size: 18px;
+                }
+            }
+            
+            .selected {
+                font-weight: bold;
+            }
+        </style>
+
+        <paper-item class="flex horizontal layout center">
+            <div style="width: 40px; height: 40px; font-size: 18px">
+                <paper-badge label="{{buildInitialsForBadge(player)}}"></paper-badge>
+            </div>
+            <div class$="{{computePlayerNameListItemClass(selected)}}" style="padding-left: 20px">
+                <span>{{player.first_name}}</span> <span>{{player.last_name}}</span>
+            </div>
+
+            <iron-icon icon="{{iconToShow(selected)}}"></iron-icon>
+
+        </paper-item>
+    </template>
+
+
+    <script>
+        Polymer({
+            is: "selectable-player",
+
+            properties: {
+                player: {
+                    type: Object
+                },
+
+                selected: Boolean
+            },
+
+            computePlayerNameListItemClass: function() {
+                return this.selected ? "flex selected" : "flex";
+            },
+
+            buildInitialsForBadge: function() {
+                var initials = "";
+                if (this.player.first_name) {
+                    initials += this.player.first_name.charAt(0);
+                }
+
+                if (this.player.last_name) {
+                    initials += this.player.last_name.charAt(0);
+                }
+
+                return initials;
+            },
+
+            iconToShow: function() {
+                return this.selected ? "check" : "";
+            }
+
+        })
+    </script>
+
+</dom-module>

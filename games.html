@@ -1,0 +1,45 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="import" href="imports.html">
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <script src="bower_components/page/page.js"></script>
+
+
+    <script>
+        window.addEventListener('WebComponentsReady', function() {
+            // We use Page.js for routing. This is a Micro
+            // client-side router inspired by the Express router
+            // More info: https://visionmedia.github.io/page.js/
+            // Removes end / from app.baseUrl which page.base requires for production
+
+            page.base("/games.html");
+
+            page('/', function() {
+                document.querySelector("#gamesMain").gameId = undefined;
+            });
+            
+            page('/games/:gameId', function(ctx, next) {
+                document.querySelector("#gamesMain").gameId = ctx.params.gameId;
+            });
+
+            // add #! before urls
+            page({
+                hashbang: true
+            });
+            
+        });
+    </script>
+</head>
+
+
+<body>
+    <games-main id="gamesMain">
+    </games-main>
+
+</body>
+
+</html>

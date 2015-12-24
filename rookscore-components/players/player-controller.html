@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<link rel="import" href="../../imports.html">
+<link rel="import" href="../index-db/object-store-controller.html">
+<!-- 
+Example of player schema player_id is the key I may use locally 
+{ player_id: 1234, id: 2, first_name: "Chris", last_name: "Pope" }, 
+-->
+
+
+
+<dom-module id="player-controller">
+
+    <script>
+        Polymer({
+            is: "player-controller",
+
+            behaviors: [
+                ObjectStoreController
+            ],
+
+
+            objectStoreName: function() {
+                return ObjectStoreController.PLAYER_OBJECT_STORE_NAME;
+            }
+        });
+    </script>
+
+</dom-module>

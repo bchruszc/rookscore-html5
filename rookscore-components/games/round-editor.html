@@ -1,0 +1,136 @@
+<link rel="import" href="../../imports.html">
+
+<dom-module id="round-editor">
+
+    <style>
+        paper-listbox /deep/ .selectable-content {
+            @apply(--layout-horizontal);
+        }
+    </style>
+
+
+    <template>
+
+        Select the caller
+        <paper-listbox id="callerList" selected="{{selectedCallerIndex}}">
+            <template is="dom-repeat" items="{{players}}" as="player">
+                <paper-item class="flex"><span>{{player.first_name}}</span> <span>{{player.last_name}}</span> </paper-item>
+            </template>
+        </paper-listbox>
+
+
+        <div class="horizontal layout">
+            Bid Amount:
+            <paper-slider class="flex" value="{{bidAmount}}" editable pin snaps max="180" min="0" max-markers="10" step="5" value="150"></paper-slider>
+        </div>
+
+
+        Select the partners
+        <paper-listbox id="partnerList" multi selected-values="{{selectedPartnerIndices}}">
+            <template is="dom-repeat" items="{{players}}" as="player">
+
+                <paper-item class="flex"><span>{{player.first_name}}</span> <span>{{player.last_name}}</span> </paper-item>
+
+            </template>
+        </paper-listbox>
+
+        <div class="horizontal layout">
+            Enter score made:
+            <paper-slider class="flex" value="{{madeAmount}}" editable pin snaps max="180" min="0" max-markers="10" step="5" value="150"></paper-slider>
+        </div>
+
+    </template>
+
+
+    <script>
+        Polymer({
+            is: "round-editor",
+
+            properties: {
+                players: Array,
+                bidAmount: Number,
+                madeAmount: Number,
+                selectedPartnerIndices: Array,
+                selectedCallerIndex: Number,
+                round: {
+                    type: Object,
+                    notify: true,
+                }
+            },
+
+            observers: [
+                'roundInputsChanged(players, bidAmount, madeAmount, selectedPartnerIndices, selectedCallerIndex)',
+                'roundChanged(round, players)'
+            ],
+
+            ready: function() {
+                this.reset();
+            },
+            
+            reset: function() {
+               this.selectedPartnerIndices = [];
+               this.selectedCallerIndex = -1;
+               this.bidAmount = 150;
+               this.madeAmount = 150;
+            }, 
+
+            roundChanged: function() {
+                this.selectedPartnerIndexes = [];
+                for (var i = 0; i < this.players.length; i++) {
+
+                    if (this.players[i].player_id == this.round.caller) {
+                        this.selectedCallerIndex = i;
+                    }
+
+                    if (this.round.partners.indexOf(this.players[i].player_id) >= 0) {
+                        this.selectedPartnerIndexes.push(i);
+                    }
+                }
+
+                this.bidAmount = this.round.points_bid;
+                this.madeAmount = this.round.points_made;
+            },
+
+            roundInputsChanged: function() {
+                if (this.selectedPartnerIndices) {
+                    var partnerIds = [];
+                    var opponentIds = [];
+
+                    for (var i = 0; i < this.players.length; i++) {
+                        if (this.selectedCallerIndex != i) {
+                            if (this.selectedPartnerIndices.indexOf(i) >= 0) {
+                                partnerIds.push(this.players[i].player_id)
+                            }
+                            else {
+                                opponentIds.push(this.players[i].player_id);
+                            }
+                        }
+                    }
+                }
+
+
+
+                if (this.selectedCallerIndex >= 0) {
+                    var callerId = this.players[this.selectedCallerIndex].player_id;
+                }
+
+
+                if (this.bidAmount >= 0 && this.madeAmount >= 0 && partnerIds && opponentIds && callerId >= 0) {
+                    this.round = {
+                        caller: callerId,
+                        partners: partnerIds,
+                        opponents: opponentIds,
+                        points_bid: this.bidAmount,
+                        points_made: this.madeAmount
+                    };
+                }
+                else {
+                    this.round = undefined;
+                }
+
+            }
+
+
+        })
+    </script>
+</dom-module>

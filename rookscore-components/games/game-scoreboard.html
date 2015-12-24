@@ -1,0 +1,41 @@
+<link rel="import" href="../../imports.html">
+
+<dom-module id="game-scoreboard">
+
+
+    <template>
+        <div class="flex horizontal layout">
+            <template is="dom-repeat" items="{{game.scores}}">
+                <paper-item class="flex">
+                    <template is="dom-if" if="{{item.made_bid}}">
+                        <iron-icon icon="star"></iron-icon>
+                    </template>
+                    <div></div><span>{{item.player.first_name}}</span> <span>{{item.player.last_name}}</span>
+                    <div></div>
+                </paper-item>
+            </template>
+        </div>
+        <iron-list items="{{scoreboard}}">
+            <template>
+                <div class="flex horizontal layout">
+                    <template is="dom-repeat" items="{{item}}">
+                        <paper-item class="flex">{{item}}</paper-item>
+                    </template>
+                </div>
+            </template>
+        </iron-list>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: "game-scoreboard",
+
+            properties: {
+                game: Object,
+                scoreboard: Object
+            }
+        });
+    </script>
+
+</dom-module>

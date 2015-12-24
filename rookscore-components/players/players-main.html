@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<link rel="import" href="../../imports.html">
+
+<dom-module id="players-main">
+
+    <style>
+        :host {
+            --paper-dialog: {
+                border: 10px;
+            }
+        }
+    </style>
+
+    <template>
+
+        <index-db db="{{db}}"></index-db>
+
+
+        <player-controller id="playerController" values="{{players}}" db="{{db}}"></player-controller>
+
+        <h1>Player List</h1>
+
+
+
+        <paper-dialog id="addPlayerDialog" on-iron-overlay-closed="addPlayerDialogClosed" style="border-left: 10px">
+            <paper-dialog-scrollable style="border: 10px">
+                <paper-material style="margin-left: 10px; margin-right: 10px; margin-top: 2px;   padding: 10px">
+                    <h2>Add Player</h2>
+
+
+                    <paper-input id="playerFirstname" label="First Name" value="{{firstName}}"></paper-input>
+                    <paper-input id="playerLastname" label="Last Name" value="{{lastName}}"></paper-input>
+                </paper-material>
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button on-click="doCancel">Cancel</paper-button>
+                <paper-button on-click="doAdd" disabled="{{addButtonDisabled(firstName, lastName)}}">Add</paper-button>
+            </div>
+        </paper-dialog>
+
+
+        <iron-list items="[[players]]" as="player">
+            <template>
+                <selectable-player player="[[player]]"></selectable-player>
+            </template>
+        </iron-list>
+
+
+        <div class="horizontal layout">
+            <div class="flex"></div>
+            <paper-fab icon="icons:add" on-click="addPlayerClicked"></paper-fab>
+        </div>
+
+
+    </template>
+
+
+    <script>
+        Polymer({
+            is: "players-main",
+
+
+            addButtonDisabled: function() {
+                if (!this.firstName || !this.lastName){
+                    return true;
+                }
+                
+                for(var i = 0; i < this.players.length; i++){
+                    if(this.players[i].first_name === this.firstName && this.players[i].last_name === this.lastName){
+                        return true;
+                    }
+                }
+                
+                return false;
+                
+            },
+
+
+            addPlayerClicked: function() {
+                this.$.addPlayerDialog.open();
+            },
+
+            doCancel: function() {
+                this.$.addPlayerDialog.close();
+            },
+
+            doAdd: function() {
+                //validation
+                if (this.firstName && this.lastName) {
+                    this.$.playerController.add({
+                        'first_name': this.firstName,
+                        'last_name': this.lastName
+                    });
+
+                    //clear input
+                    this.firstName = null;
+                    this.lastName = null;
+
+                    this.$.addPlayerDialog.close();
+                }
+
+            }
+        });
+    </script>
+
+</dom-module>
