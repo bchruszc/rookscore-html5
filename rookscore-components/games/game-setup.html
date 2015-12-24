@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <link rel="import" href="../../imports.html">
 
+<script src="../../bower_components/moment/min/moment.min.js"></script>
+
+
 <dom-module id="game-setup">
 
 
@@ -58,10 +61,10 @@
                 //build a new game definition
                 //add to game store
                 //jump to game-in-progress view
-
+                //format sample: 2015-04-03 16:06:07.002320
                 var game = {
-                    'created_date': "now", //fix!
-                    'entered_date': "now", //also fix. dont' set until upload
+                    'created_date': moment().format("YYYY-MM-DD HH:mm:ss.SSSSSSZZ"),
+                    'entered_date': null, //also fix. dont' set until upload
                     scores: [],
                     bids: []
                 };
@@ -78,7 +81,7 @@
 
                 this.$.gameController.add(game, function(newGameID) {
                     //do stuff with this id.
-                    window.location.href = "/games.html#!/games/" + newGameID;
+                    window.location.href = "/game.html#!/" + newGameID;
                 });
 
             }

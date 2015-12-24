@@ -1,0 +1,180 @@
+<link rel="import" href="../../imports.html">
+
+<script src="../../bower_components/moment/min/moment.min.js"></script>
+
+
+
+<dom-module id="games-list">
+
+    <style>
+        :host {
+            --paper-badge-width: 40px;
+            --paper-badge-height: 40px;
+            --paper-badge: {
+                font-size: 14px;
+                text-align: center;
+            }
+        }
+        
+        .players-in-game {
+            margin-left: 20px;
+            margin-right: 20px
+        }
+        
+        .badge-holder {
+            width: 40px;
+            height: 40px;
+        }
+    </style>
+
+
+    <template>
+        <index-db db="{{db}}"></index-db>
+        <game-controller id="gameController" db="[[db]]" values="{{games}}"></game-controller>
+
+
+        <h1>Games on this device</h1>
+
+        <iron-list items="[[games]]" sort="orderGames">
+            <template>
+                <a href="{{buildURLForGame(item)}}">
+                    <div class="horizontal layout center">
+
+                        <div class="badge-holder">
+                            <paper-badge label="{{dateFromGame(item)}}"></paper-badge>
+                        </div>
+
+                        <div class="players-in-game flex">{{playersInGame(item)}}</div>
+
+                        <div>
+                            <iron-icon icon="{{iconForGame(item)}}"></iron-icon>
+                            <span class$="{{submittedStatusClassForGame(item)}}">{{submissionStatusForGame(item)}}</span>
+                        </div>
+
+                    </div>
+                </a>
+            </template>
+        </iron-list>
+
+        <div class="horizontal layout end-justified">
+            <a href="/game-setup.html">
+                <paper-fab icon="add">
+
+                </paper-fab>
+
+            </a>
+        </div>
+
+
+
+    </template>
+
+    <script>
+        Polymer({
+            is: "games-list",
+            properties: {
+                games: Array
+            },
+
+
+            buildURLForGame: function(game) {
+                return "/game.html#!/" + game.game_id;
+            },
+
+            orderGames: function(game1, game2) {
+                var d1 = moment(game1.created_date);
+                var d2 = moment(game2.created_date);
+
+                if (d1 && d2) {
+                    if (d1.after(d2)) {
+                        return 1;
+                    }
+                    else if (d2.after(d1)) {
+                        return -1;
+                    }
+                }
+                else if (d1) {
+                    return 1;
+                }
+                else if (d2) {
+                    return -1;
+                }
+
+                return 0;
+            },
+
+            dateFromGame: function(game) {
+                var date = moment(game.created_date);
+                if (date.isValid()) {
+                    return date.format("MMM D");
+                }
+                else {
+                    return "?"
+                }
+            },
+
+            playersInGame: function(item) {
+                var players = "";
+                for (var i = 0; i < item.scores.length; i++) {
+                    players += this.buildPlayerInitials(item.scores[i].player);
+                    players += " (" + (item.scores[i].made_bid ? "*" : "") + item.scores[i].score + ")"
+                    if (i < item.scores.length - 1) {
+                        players += ", ";
+                    }
+                }
+                return players;
+            },
+
+
+            buildPlayerInitials: function(player) {
+                var initials = "";
+
+                if (player.first_name) {
+                    initials += player.first_name.charAt(0).toUpperCase();
+                }
+
+                if (player.last_name) {
+                    initials += player.last_name.charAt(0).toUpperCase();
+                }
+
+                return initials;
+            },
+
+
+            iconForGame: function(game) {
+                if (game.entered_date && moment(game.entered_date).isValid()) {
+                    return "icons:check";
+                }
+                else {
+                    return "";
+                }
+            },
+
+            submissionStatusForGame: function(game) {
+                if (game.entered_date) {
+                    var submittedDate = moment(game.entered_date);
+                    if (submittedDate.isValid()) {
+                        return "Submitted " + submittedDate.format("H:mA MMM D, YYYY");
+                    }
+                    else {
+                        return "Not Submitted"
+                    }
+                }
+                else {
+                    return "Not submitted";
+                }
+            },
+
+            submittedStatusClassForGame: function(game) {
+                if (game.entered_date) {
+                    return "game-submitted"
+                }
+                else {
+                    return "game-not-submitted";
+                }
+            }
+
+        })
+    </script>
+
+</dom-module>

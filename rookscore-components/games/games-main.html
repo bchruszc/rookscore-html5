@@ -134,18 +134,22 @@
                     }
                 });
 
-                var lastRound = [];
+                var lastRound = {};
+                lastRound.scores = [];
+                
                 for (var i = 0; i < this.game.scores.length; i++) {
-                    lastRound.push(0);
+                    lastRound.scores.push(0);
                 }
 
                 for (var i = 0; i < this.game.bids.length; i++) {
                     var bid = this.game.bids[i];
-                    var thisRound = [];
+                    var thisRound = {};
+                    thisRound.scores = [];
 
                     for (var j = 0; j < this.game.scores.length; j++) {
-                        thisRound[j] = this.computeUpdatedScore(this.game.scores[j].player.player_id, lastRound[j], bid, this.game.scores.length);
+                        thisRound.scores[j] = this.computeUpdatedScore(this.game.scores[j].player.player_id, lastRound.scores[j], bid, this.game.scores.length);
                     }
+                    thisRound.bid  = bid;
 
                     scoreboard.push(thisRound);
                     lastRound = thisRound;

@@ -2,6 +2,22 @@
 
 <dom-module id="game-scoreboard">
 
+    <style>
+        .summary-column {
+            width: 150px;
+        }
+        
+        .successful-bid {
+            width: 150px;
+            background-color: green;
+        }
+        
+        .failed-bid {
+            width: 150px;
+            background-color: red;
+        }
+    </style>
+
 
     <template>
         <div class="flex horizontal layout">
@@ -14,13 +30,27 @@
                     <div></div>
                 </paper-item>
             </template>
+
+
+            <!-- fixed-size column to display round summary -->
+            <div class="summary-column"></div>
+
         </div>
         <iron-list items="{{scoreboard}}">
             <template>
-                <div class="flex horizontal layout">
-                    <template is="dom-repeat" items="{{item}}">
-                        <paper-item class="flex">{{item}}</paper-item>
+
+                <div class="vertical layout">
+                    <template is="dom-if" if="{{shouldDrawDividerLine(index)}}">
+                        <div>Dealer divider line</div>
                     </template>
+                    <div class="flex horizontal layout">
+                        <template is="dom-repeat" items="{{item.scores}}">
+                            <paper-item class="flex">{{item}}</paper-item>
+                        </template>
+
+                        <div class="summary-column" class$="{{computeRoundClass(item)}}">{{buildRoundSummaryText(item)}}</div>
+                    </div>
+
                 </div>
             </template>
         </iron-list>
@@ -34,6 +64,70 @@
             properties: {
                 game: Object,
                 scoreboard: Object
+            },
+
+
+            shouldDrawDividerLine: function(index) {
+                return index % this.game.scores.length == 0 && index > 0;
+            },
+
+            computeRoundClass: function(round) {
+                if (round.bid.points_made >= round.bid.points_bid) {
+                    return "successful-bid";
+                }
+                else {
+                    return "failed-bid";
+                }
+
+            },
+
+            buildRoundSummaryText: function(round) {
+
+                var callingPlayer = this.findPlayerWithID(round.bid.caller);
+                var partners = [];
+                for (var i = 0; i < round.bid.partners.length; i++) {
+                    partners.push(this.findPlayerWithID(round.bid.partners[i]));
+                }
+
+                var roundSummary = "";
+
+                if (callingPlayer) {
+                    roundSummary += this.buildPlayerInitials(callingPlayer);
+                    roundSummary += " (" + round.bid.points_bid + ") ";
+
+                    for (var i = 0; i < partners.length; i++) {
+                        roundSummary += this.buildPlayerInitials(partners[i]);
+                        if (i < partners.length - 1) {
+                            roundSummary += ", "
+                        }
+                    }
+
+                    roundSummary += " " + round.bid.points_made;
+                }
+
+                return roundSummary;
+            },
+
+            buildPlayerInitials: function(player) {
+                var initials = "";
+
+                if (player.first_name) {
+                    initials += player.first_name.charAt(0).toUpperCase();
+                }
+
+                if (player.last_name) {
+                    initials += player.last_name.charAt(0).toUpperCase();
+                }
+
+                return initials;
+            },
+
+            findPlayerWithID: function(id) {
+                for (var i = 0; i < this.game.scores.length; i++) {
+                    if (this.game.scores[i].player.player_id == id) {
+                        return this.game.scores[i].player;
+                    }
+                }
             }
         });
     </script>
