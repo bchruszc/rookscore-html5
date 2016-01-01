@@ -6,7 +6,8 @@
 
 <dom-module id="games-list">
 
-    <style>
+
+    <style include="rookscore-styles">
         :host {
             --paper-badge-width: 40px;
             --paper-badge-height: 40px;
@@ -32,32 +33,34 @@
         <game-controller id="gameController" db="[[db]]" values="{{games}}"></game-controller>
 
 
-        <h1>Games on this device</h1>
-
         <iron-list items="[[games]]" sort="orderGames">
             <template>
-                <a href="{{buildURLForGame(item)}}">
-                    <div class="horizontal layout center">
+                <div class="rookscore-list-item">
+                    <a href="{{buildURLForGame(item)}}">
+                        <div class="horizontal layout center">
 
-                        <div class="badge-holder">
-                            <paper-badge label="{{dateFromGame(item)}}"></paper-badge>
+                            <div class="badge-holder">
+                                <paper-badge label="{{dateFromGame(item)}}"></paper-badge>
+                            </div>
+
+                            <div class="players-in-game flex">{{playersInGame(item)}}</div>
+
+                            <div>
+                                <iron-icon icon="{{iconForGame(item)}}"></iron-icon>
+                                <span class$="{{submittedStatusClassForGame(item)}}">{{submissionStatusForGame(item)}}</span>
+                            </div>
+
                         </div>
-
-                        <div class="players-in-game flex">{{playersInGame(item)}}</div>
-
-                        <div>
-                            <iron-icon icon="{{iconForGame(item)}}"></iron-icon>
-                            <span class$="{{submittedStatusClassForGame(item)}}">{{submissionStatusForGame(item)}}</span>
-                        </div>
-
-                    </div>
-                </a>
+                    </a>
+                </div>
             </template>
         </iron-list>
 
         <div class="horizontal layout end-justified">
-            <a href="/game-setup.html">
-                <paper-fab icon="add">
+            <a href="/rookscore2.html#!/game-setup">
+
+
+                <paper-fab class="rookscore-fab" icon="add">
 
                 </paper-fab>
 

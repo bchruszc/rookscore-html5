@@ -6,88 +6,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="import" href="imports.html">
     <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
-    <script src="bower_components/page/page.js"></script>
 </head>
 
-<body>
-
-    <template id="t" is="dom-bind">
-
-        <index-db db="{{db}}"></index-db>
-
-
-
-        <iron-pages id="pageController" attr-for-selected="page">
-            <div page="home">
-                <h1>Rookscore 2.0</h1>
-
-                <a href="/rookscore2.html#!/players">Manage Players</a>
-                <br>
-                <a href="/rookscore2.html#!/game-setup">Start New Game</a>
-                <br>
-                <a href="/rookscore2.html#!/games">Games Played on This Device</a>
-                <br>
-            </div>
-
-            <div page="players">
-                <players-main db="[[db]]">
-                </players-main>
-            </div>
-
-            <div page="game-setup">
-                <game-setup db="[[db]]">
-                </game-setup>
-            </div>
-
-            <div page="games">
-                <games-list db="[[db]]">
-                </games-list>
-            </div>
-
-            <div page="game">
-                <games-main id="gamesMain" db="[[db]]">
-                </games-main>
-            </div>
-        </iron-pages>
-    </template>
-
+<body  class="fullbleed layout vertical" style="background-color: #f5f5f5;">
+    <rookscore-main class="flex vertical layout">
+        
+    </rookscore-main>
 </body>
 
-<script>
-    var t = document.querySelector('#t');
 
-    // The dom-change event signifies when the template has stamped its DOM.
-    t.addEventListener('dom-change', function() {
-        page.base("/rookscore2.html");
-
-        page('/', function(ctx, next) {
-            document.querySelector("#pageController").selected = "home";
-        });
-
-
-        page('/players', function(ctx, next) {
-            document.querySelector("#pageController").selected = "players";
-        });
-
-        page('/game-setup', function(ctx, next) {
-            document.querySelector("#pageController").selected = "game-setup";
-        });
-
-        page('/games', function(ctx, next) {
-            document.querySelector("#pageController").selected = "games";
-        });
-
-        page('/games/:gameId', function(ctx, next) {
-            document.querySelector("#pageController").selected = "game";
-            document.querySelector("#gamesMain").gameId = ctx.params.gameId;
-        });
-
-        // add #! before urls
-        page({
-            hashbang: true
-        });
-    });
-</script>
 
 
 </html>

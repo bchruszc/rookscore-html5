@@ -3,14 +3,14 @@
 
 <dom-module id="games-main">
 
-
+    <style include="rookscore-styles"></style>
 
     <template>
         <game-controller id="gameController" db="[[db]]"></game-controller>
         <game-scoreboard game="[[game]]" scoreboard="[[scoreboard]]"></game-scoreboard>
 
 
-        <paper-dialog id="addRoundDialog" on-iron-overlay-closed="addPlayerDialogClosed" style="border-left: 10px">
+        <paper-dialog id="addRoundDialog" style="border-left: 10px;  width: 80%">
             <paper-dialog-scrollable style="border: 10px">
                 <paper-material style="margin-left: 10px; margin-right: 10px; margin-top: 2px;   padding: 10px">
                     <round-editor id="roundEditor" players="{{listPlayers(game)}}" round="{{round}}"></round-editor>
@@ -24,7 +24,7 @@
         </paper-dialog>
 
 
-        <paper-fab on-click="addRoundClicked" icon="add"></paper-fab>
+        <paper-fab class="rookscore-fab" on-click="addRoundClicked" icon="add"></paper-fab>
 
 
     </template>

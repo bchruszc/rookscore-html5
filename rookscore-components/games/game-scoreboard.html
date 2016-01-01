@@ -2,58 +2,59 @@
 
 <dom-module id="game-scoreboard">
 
-    <style>
-        .summary-column {
-            width: 150px;
-        }
-        
-        .successful-bid {
-            width: 150px;
-            background-color: green;
-        }
-        
-        .failed-bid {
-            width: 150px;
-            background-color: red;
+
+
+    <style include="rookscore-styles">
+        :host {
+            @apply(--layout-vertical)
         }
     </style>
 
 
     <template>
-        <div class="flex horizontal layout">
-            <template is="dom-repeat" items="{{game.scores}}">
-                <paper-item class="flex">
-                    <template is="dom-if" if="{{item.made_bid}}">
-                        <iron-icon icon="star"></iron-icon>
+
+        <paper-header-panel>
+            <paper-toolbar>
+                <div class="rookscore-scoreboard-row">
+                    <template is="dom-repeat" items="{{game.scores}}">
+                        <div class="rookscore-scoresheet-header-item">
+                            <template is="dom-if" if="{{item.made_bid}}">
+                                <iron-icon icon="star"></iron-icon>
+                            </template>
+                            <span>{{item.player.first_name}}</span> <span>{{item.player.last_name}}</span>
+                        </div>
                     </template>
-                    <div></div><span>{{item.player.first_name}}</span> <span>{{item.player.last_name}}</span>
-                    <div></div>
-                </paper-item>
-            </template>
 
 
-            <!-- fixed-size column to display round summary -->
-            <div class="summary-column"></div>
-
-        </div>
-        <iron-list items="{{scoreboard}}">
-            <template>
-
-                <div class="vertical layout">
-                    <template is="dom-if" if="{{shouldDrawDividerLine(index)}}">
-                        <div>Dealer divider line</div>
-                    </template>
-                    <div class="flex horizontal layout">
-                        <template is="dom-repeat" items="{{item.scores}}">
-                            <paper-item class="flex">{{item}}</paper-item>
-                        </template>
-
-                        <div class="summary-column" class$="{{computeRoundClass(item)}}">{{buildRoundSummaryText(item)}}</div>
-                    </div>
-
+                    <!-- fixed-size column to display round summary -->
+                    <div class="rookscore-scoresheet-summary-column"></div>
                 </div>
-            </template>
-        </iron-list>
+
+            </paper-toolbar>
+            <div>
+                <iron-list items="{{scoreboard}}">
+                    <template>
+
+                        <div class="vertical layout">
+                            <template is="dom-if" if="{{shouldDrawDividerLine(index)}}">
+                                <div class="rookscore-scoresheet-divider-line">Dealer divider line</div>
+                            </template>
+                            <div class="rookscore-scoreboard-row">
+                                <template is="dom-repeat" items="{{item.scores}}">
+                                    <div class="rookscore-scoresheet-item">{{item}}</paper-item>
+                                </template>
+
+                                <div class="rookscore-scoresheet-summary-column" class$="{{computeRoundClass(item)}}">{{buildRoundSummaryText(item)}}</div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </template>
+                </iron-list>
+
+            </div>
+        </paper-header-panel>
+
 
     </template>
 
@@ -73,10 +74,10 @@
 
             computeRoundClass: function(round) {
                 if (round.bid.points_made >= round.bid.points_bid) {
-                    return "successful-bid";
+                    return "rookscore-scoresheet-successful-bid";
                 }
                 else {
-                    return "failed-bid";
+                    return "rookscore-scoresheet-failed-bid";
                 }
 
             },

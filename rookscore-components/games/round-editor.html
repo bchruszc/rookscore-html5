@@ -2,7 +2,7 @@
 
 <dom-module id="round-editor">
 
-    <style>
+    <style include="rookscore-styles">
         paper-listbox /deep/ .selectable-content {
             @apply(--layout-horizontal);
         }
@@ -11,33 +11,35 @@
 
     <template>
 
-        Select the caller
+        <iron-media-query query="(min-width: 720px)" query-matches="{{wide}}"></iron-media-query>
+
+
+
+        <div class="rookscore-round-editor-section-label">Select the caller</div>
         <paper-listbox id="callerList" selected="{{selectedCallerIndex}}">
             <template is="dom-repeat" items="{{players}}" as="player">
-                <paper-item class="flex"><span>{{player.first_name}}</span> <span>{{player.last_name}}</span> </paper-item>
+                <paper-item class="rookscore-round-editor-player-selection-item">{{buildPlayerNameText(player)}}</paper-item>
             </template>
         </paper-listbox>
 
 
-        <div class="horizontal layout">
-            Bid Amount:
-            <paper-slider class="flex" value="{{bidAmount}}" editable pin snaps max="180" min="0" max-markers="10" step="5" value="150"></paper-slider>
+        <div class="vertical layout flex">
+            <points-selector label="Enter score made" value="{{bidAmount}}"></points-selector>
         </div>
 
 
-        Select the partners
+        <div class="rookscore-round-editor-section-label">Select the partners</div>
         <paper-listbox id="partnerList" multi selected-values="{{selectedPartnerIndices}}">
             <template is="dom-repeat" items="{{players}}" as="player">
-
-                <paper-item class="flex"><span>{{player.first_name}}</span> <span>{{player.last_name}}</span> </paper-item>
-
+                <paper-item class="rookscore-round-editor-player-selection-item">{{buildPlayerNameText(player)}}</paper-item>
             </template>
         </paper-listbox>
 
-        <div class="horizontal layout">
-            Enter score made:
-            <paper-slider class="flex" value="{{madeAmount}}" editable pin snaps max="180" min="0" max-markers="10" step="5" value="150"></paper-slider>
+        <div class="vertical layout flex">
+            <points-selector value="{{madeAmount}}" label="Enter score made:"></points-selector>
         </div>
+
+
 
     </template>
 
@@ -66,13 +68,13 @@
             ready: function() {
                 this.reset();
             },
-            
+
             reset: function() {
-               this.selectedPartnerIndices = [];
-               this.selectedCallerIndex = -1;
-               this.bidAmount = 150;
-               this.madeAmount = 150;
-            }, 
+                this.selectedPartnerIndices = [];
+                this.selectedCallerIndex = -1;
+                this.bidAmount = 150;
+                this.madeAmount = 150;
+            },
 
             roundChanged: function() {
                 this.selectedPartnerIndexes = [];
@@ -128,7 +130,30 @@
                     this.round = undefined;
                 }
 
-            }
+            },
+
+            buildPlayerNameText: function(player) {
+                if (this.wide) {
+                    return player.first_name + " " + player.last_name;
+                }
+                else {
+                    return this.buildPlayerInitials(player);
+                }
+            },
+
+            buildPlayerInitials: function(player) {
+                var initials = "";
+
+                if (player.first_name) {
+                    initials += player.first_name.charAt(0).toUpperCase();
+                }
+
+                if (player.last_name) {
+                    initials += player.last_name.charAt(0).toUpperCase();
+                }
+
+                return initials;
+            },
 
 
         })

@@ -3,7 +3,7 @@
 
 <dom-module id="players-main">
 
-    <style>
+    <style include="rookscore-styles">
         :host {
             --paper-dialog: {
                 border: 10px;
@@ -14,10 +14,6 @@
     <template>
 
         <player-controller id="playerController" values="{{players}}" db="[[db]]"></player-controller>
-
-        <h1>Player List</h1>
-
-
 
         <paper-dialog id="addPlayerDialog" on-iron-overlay-closed="addPlayerDialogClosed" style="border-left: 10px">
             <paper-dialog-scrollable style="border: 10px">
@@ -38,14 +34,14 @@
 
         <iron-list items="[[players]]" as="player">
             <template>
-                <selectable-player player="[[player]]"></selectable-player>
+                <selectable-player class="rookscore-list-item" player="[[player]]"></selectable-player>
             </template>
         </iron-list>
 
 
         <div class="horizontal layout">
             <div class="flex"></div>
-            <paper-fab icon="icons:add" on-click="addPlayerClicked"></paper-fab>
+            <paper-fab class="rookscore-fab" icon="icons:add" on-click="addPlayerClicked"></paper-fab>
         </div>
 
 

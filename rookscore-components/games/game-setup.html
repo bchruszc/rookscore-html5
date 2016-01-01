@@ -6,6 +6,8 @@
 
 <dom-module id="game-setup">
 
+    <style include="rookscore-styles"></style>
+
 
     <template>
 
@@ -17,9 +19,6 @@
         </game-controller>
 
 
-
-        <h1>Select Players</h1>
-
         <iron-list id="itemsList" items="[[players]]" selected-items="{{selectedPlayers}}" as="player" selection-enabled multi-selection>
             <template>
                 <selectable-player player="[[player]]" selected="[[selected]]"></selectable-player>
@@ -28,7 +27,7 @@
 
         <div class="horizontal layout">
             <div class="flex"></div>
-            <paper-fab icon="icons:forward" on-click="startGameClicked" disabled="{{startGameDisabled(selectedPlayers.length)}}">Test!</paper-fab>
+            <paper-fab class="rookscore-fab" icon="icons:forward" on-click="startGameClicked" disabled="{{startGameDisabled(selectedPlayers.length)}}">Test!</paper-fab>
         </div>
 
 

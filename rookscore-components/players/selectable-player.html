@@ -6,13 +6,9 @@
     <template>
 
 
-        <style>
+        <style include="rookscore-styles">
             :host {
-                --paper-badge-width: 40px;
-                --paper-badge-height: 40px;
-                --paper-badge: {
-                    font-size: 18px;
-                }
+                @apply(--rookscore-badge)
             }
             
             .selected {
