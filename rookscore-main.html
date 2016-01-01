@@ -1,0 +1,109 @@
+<link rel="import" href="imports.html">
+
+<script src="bower_components/page/page.js"></script>
+
+
+<dom-module id="rookscore-main">
+
+
+
+    <style include="rookscore-styles">
+    </style>
+
+
+    <template>
+        <index-db db="{{db}}"></index-db>
+
+        <div class="vertical layout" style="height: 100%">
+            <paper-toolbar>
+                <template is="dom-if" if="{{title}}">
+                    <paper-item onclick="window.history.back()">
+                        <iron-icon icon="arrow-back"></iron-icon>
+                    </paper-item>
+                </template>
+
+                <paper-item class="flex">{{title}}</paper-item>
+
+                <paper-item>Rookscore 2.0</paper-item>
+
+            </paper-toolbar>
+
+            <paper-material class="rookscore-main-content flex vertical layout">
+                <iron-pages id="pageController" attr-for-selected="page" selected="[[selected]]" class="flex">
+                    <div page="home">
+                        <a href="/rookscore2.html#!/players">Manage Players</a>
+                        <br>
+                        <a href="/rookscore2.html#!/game-setup">Start New Game</a>
+                        <br>
+                        <a href="/rookscore2.html#!/games">Games Played on This Device</a>
+                        <br>
+                    </div>
+
+                    <div page="players">
+                        <players-main db="[[db]]">
+                        </players-main>
+                    </div>
+
+                    <div page="game-setup">
+                        <game-setup db="[[db]]">
+                        </game-setup>
+                    </div>
+
+                    <div page="games">
+                        <games-list db="[[db]]">
+                        </games-list>
+                    </div>
+
+                    <div page="game">
+                        <games-main id="gamesMain" db="[[db]]">
+                        </games-main>
+                    </div>
+                </iron-pages>
+            </paper-material>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: "rookscore-main",
+
+            ready: function() {
+
+                var that = this;
+                page.base("/rookscore2.html");
+
+                page('/', function(ctx, next) {
+                    that.selected = "home";
+                    that.title = "";
+                });
+
+
+                page('/players', function(ctx, next) {
+                    that.selected = "players";
+                    that.title = "Player List";
+                });
+
+                page('/game-setup', function(ctx, next) {
+                    that.selected = "game-setup";
+                    that.title = "Setup Game - Select Players";
+                });
+
+                page('/games', function(ctx, next) {
+                    that.selected = "games";
+                    that.title = "Games on This Device";
+                });
+
+                page('/games/:gameId', function(ctx, next) {
+                    that.selected = "game";
+                    that.$.gamesMain.gameId = ctx.params.gameId;
+                    that.title = "Game";
+                });
+
+                // add #! before urls
+                page({
+                    hashbang: true
+                });
+            }
+        })
+    </script>
+</dom-module>
