@@ -14,7 +14,7 @@
     <template>
         <index-db db="{{db}}"></index-db>
 
-        <div class="vertical layout" style="height: 100%">
+        <div class="flex vertical layout" style="height: 100%">
             <paper-toolbar>
                 <template is="dom-if" if="{{title}}">
                     <paper-item onclick="window.history.back()">
@@ -29,35 +29,27 @@
             </paper-toolbar>
 
             <paper-material class="rookscore-main-content flex vertical layout">
-                <iron-pages id="pageController" attr-for-selected="page" selected="[[selected]]" class="flex">
+                <iron-pages id="pageController" attr-for-selected="page" selected="[[selected]]" class="flex vertical layout">
                     <div page="home">
-                        <a href="/rookscore2.html#!/players">Manage Players</a>
+                        <a href="rookscore2.html#!/players">Manage Players</a>
                         <br>
-                        <a href="/rookscore2.html#!/game-setup">Start New Game</a>
+                        <a href="rookscore2.html#!/game-setup">Start New Game</a>
                         <br>
-                        <a href="/rookscore2.html#!/games">Games Played on This Device</a>
+                        <a href="rookscore2.html#!/games">Games Played on This Device</a>
                         <br>
                     </div>
 
-                    <div page="players">
-                        <players-main db="[[db]]">
+                        <players-main page="players" db="[[db]]" class="flex vertical layout">
                         </players-main>
-                    </div>
 
-                    <div page="game-setup">
-                        <game-setup db="[[db]]">
+                        <game-setup page="game-setup" db="[[db]]" class="flex vertical layout" >
                         </game-setup>
-                    </div>
 
-                    <div page="games">
-                        <games-list db="[[db]]">
+                        <games-list page="games" class="flex vertical layout" db="[[db]]">
                         </games-list>
-                    </div>
 
-                    <div page="game">
-                        <games-main id="gamesMain" db="[[db]]">
+                        <games-main page="game" class="flex vertical layout" id="gamesMain" db="[[db]]">
                         </games-main>
-                    </div>
                 </iron-pages>
             </paper-material>
         </div>
@@ -70,9 +62,9 @@
             ready: function() {
 
                 var that = this;
-                page.base("/rookscore2.html");
+                page.base("/rookscore-html5/rookscore2.html");
 
-                page('/', function(ctx, next) {
+                page('', function(ctx, next) {
                     that.selected = "home";
                     that.title = "";
                 });
