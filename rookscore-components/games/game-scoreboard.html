@@ -1,3 +1,4 @@
+<link rel="import" href="../../rookscore-styles.html">
 <link rel="import" href="../../imports.html">
 
 <dom-module id="game-scoreboard">
@@ -17,18 +18,34 @@
 
 
         <div class="rookscore-scoreboard-row">
-            <div style="width: 20px">Hand</div>
+
+            <template is="dom-if" if="{{wide}}">
+                <div style="width: 40px">Hand</div>
+            </template>
+
+            <template is="dom-if" if="{{!wide}}">
+                <div style="width: 20px">#</div>
+            </template>
+
+
             <template id="scoresheetHeader" is="dom-repeat" items="{{scoreboard.summary}}">
                 <div class="rookscore-scoresheet-header-item">
-                    <template is="dom-if" if="{{item.made_bid}}">
-                        <iron-icon icon="star"></iron-icon>
-                    </template>
+
                     <template is="dom-if" if="{{wide}}">
+                        <template is="dom-if" if="{{item.made_bid}}">
+                            <iron-icon icon="star"></iron-icon>
+                        </template>
                         <span>{{item.player.first_name}}</span> <span>{{item.player.last_name}}</span>
                     </template>
 
+
                     <template is="dom-if" if="{{!wide}}">
-                        <span>{{buildPlayerInitials(item.player)}}</span>
+                        <div class="vertical layout center">
+                            <template is="dom-if" if="{{item.made_bid}}">
+                                <iron-icon icon="star"></iron-icon>
+                            </template>
+                            <span>{{buildPlayerInitials(item.player)}}</span>
+                        </div>
                     </template>
 
 
@@ -49,7 +66,17 @@
                             <div class="rookscore-scoresheet-divider-line center">Dealer divider line</div>
                         </template>
                         <div class="rookscore-scoreboard-row">
-                            <div style="width: 20px">{{computeHandNumber(index)}}</div>
+
+                            <template is="dom-if" if="{{wide}}">
+                                <div style="width: 40px">{{computeHandNumber(index, item)}}</div>
+                            </template>
+
+                            <template is="dom-if" if="{{!wide}}">
+                                <div style="width: 20px">{{computeHandNumber(index, item)}}</div>
+                            </template>
+
+
+
                             <template is="dom-repeat" items="{{item.scores}}">
                                 <div class="rookscore-scoresheet-item">{{item}}</paper-item>
                             </template>
@@ -96,9 +123,9 @@
                 }
 
             },
-            
-            computeHandNumber: function(index){
-              return this.scoreboard.rounds.length - index;
+
+            computeHandNumber: function(index) {
+                return this.scoreboard.rounds.length - index;
             },
 
             buildRoundSummaryText: function(round) {
