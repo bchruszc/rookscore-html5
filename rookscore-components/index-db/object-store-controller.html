@@ -24,6 +24,18 @@
             }
         },
 
+
+        attached: function() {
+            this.signal = document.createElement('iron-signals');
+            this.signal.addEventListener('iron-signal-rookscore-db-changed', this.onDBChange.bind(this));
+            Polymer.dom(this.root).appendChild(this.signal);
+        },
+
+
+        onDBChange: function() {
+            this.load();
+        },
+
         onDBSet: function() {
             this.load();
         },
@@ -43,7 +55,11 @@
                     onSuccessCallback(event.target.result);
                 }
 
-                that.load();
+                that.fire('iron-signal', {
+                    name: 'rookscore-db-changed',
+                    data: event.detail
+                });
+
             };
         },
 
@@ -80,7 +96,10 @@
             var request = objectStore.put(toSave);
             var that = this;
             request.onsuccess = function(event) {
-                that.load();
+                that.fire('iron-signal', {
+                    name: 'rookscore-db-changed',
+                    data: event.detail
+                });
             };
 
         }
