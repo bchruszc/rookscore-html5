@@ -18,7 +18,7 @@
 
     <template>
         <game-controller id="gameController" db="[[db]]"></game-controller>
-        <game-scoreboard class="flex vertical layout" game="[[game]]" scoreboard="[[scoreboard]]"></game-scoreboard>
+        <game-scoreboard class="flex vertical layout" players="{{listPlayers(game)}}" scoreboard="[[scoreboard]]"></game-scoreboard>
 
 
         <paper-dialog id="addRoundDialog" style="padding: 0px;" >
@@ -139,7 +139,8 @@
             buildScoreboard: function() {
                 //given rounds, compute score of each player after each round. 
 
-                var scoreboard = [];
+                var scoreboard = {};
+                scoreboard.rounds = [];
 
                 this.game.scores.sort(function(a, b) {
                     
@@ -169,9 +170,12 @@
                     }
                     thisRound.bid  = bid;
 
-                    scoreboard.splice(0,0,thisRound);
+                    //rounds is reverse-chronological order (most recent round on top - it's the scoreboard view model)
+                    scoreboard.rounds.splice(0,0,thisRound);
                     lastRound = thisRound;
                 }
+                
+                scoreboard.summary =  JSON.parse(JSON.stringify(this.game.scores));
 
                 return scoreboard;
             },
@@ -185,7 +189,7 @@
                         newScore = currentScore + bid.points_made;
 
                         //special case for going alone
-                        if (bid.partners.length == 0) {
+                        if (bid.partners.length == 0 && bid.points_made == 180) {
                             newScore += (20 + (numPlayers - 4) * 10);
                         }
 

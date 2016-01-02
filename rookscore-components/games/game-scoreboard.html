@@ -12,55 +12,57 @@
 
 
     <template>
-      
-            <rookscore-media-query wide="{{wide}}"></rookscore-media-query>
 
-      
-            <div class="rookscore-scoreboard-row">
-                <template id="scoresheetHeader" is="dom-repeat" items="{{game.scores}}">
-                    <div class="rookscore-scoresheet-header-item">
-                        <template is="dom-if" if="{{item.made_bid}}">
-                            <iron-icon icon="star"></iron-icon>
-                        </template>
-                        <template is="dom-if" if="{{wide}}">
-                          <span>{{item.player.first_name}}</span> <span>{{item.player.last_name}}</span>  
-                        </template>
+        <rookscore-media-query wide="{{wide}}"></rookscore-media-query>
 
-                        <template is="dom-if" if="{{!wide}}">
-                          <span>{{buildPlayerInitials(item.player)}}</span>  
-                        </template>
 
-                        
+        <div class="rookscore-scoreboard-row">
+            <div style="width: 20px">Hand</div>
+            <template id="scoresheetHeader" is="dom-repeat" items="{{scoreboard.summary}}">
+                <div class="rookscore-scoresheet-header-item">
+                    <template is="dom-if" if="{{item.made_bid}}">
+                        <iron-icon icon="star"></iron-icon>
+                    </template>
+                    <template is="dom-if" if="{{wide}}">
+                        <span>{{item.player.first_name}}</span> <span>{{item.player.last_name}}</span>
+                    </template>
+
+                    <template is="dom-if" if="{{!wide}}">
+                        <span>{{buildPlayerInitials(item.player)}}</span>
+                    </template>
+
+
+                </div>
+            </template>
+
+
+            <!-- fixed-size column to display round summary -->
+            <div class="rookscore-scoresheet-summary-column"></div>
+        </div>
+
+        <div class="flex vertical layout">
+            <iron-list id="roundList" items="{{scoreboard.rounds}}" class="flex">
+                <template>
+
+                    <div class="vertical layout">
+                        <template is="dom-if" if="{{shouldDrawDividerLine(index, item)}}">
+                            <div class="rookscore-scoresheet-divider-line center">Dealer divider line</div>
+                        </template>
+                        <div class="rookscore-scoreboard-row">
+                            <div style="width: 20px">{{computeHandNumber(index)}}</div>
+                            <template is="dom-repeat" items="{{item.scores}}">
+                                <div class="rookscore-scoresheet-item">{{item}}</paper-item>
+                            </template>
+
+                            <div class="rookscore-scoresheet-summary-column" class$="{{computeRoundClass(item)}}">{{buildRoundSummaryText(item)}}</div>
+                            </div>
+
+                        </div>
                     </div>
                 </template>
+            </iron-list>
 
-
-                <!-- fixed-size column to display round summary -->
-                <div class="rookscore-scoresheet-summary-column"></div>
-            </div>
-
-            <div class="flex vertical layout">
-                <iron-list id="roundList" items="{{scoreboard}}" class="flex">
-                    <template>
-
-                        <div class="vertical layout">
-                            <template is="dom-if" if="{{shouldDrawDividerLine(index, item)}}" restamp>
-                                <div class="rookscore-scoresheet-divider-line">Dealer divider line</div>
-                            </template>
-                            <div class="rookscore-scoreboard-row">
-                                <template is="dom-repeat" items="{{item.scores}}">
-                                    <div class="rookscore-scoresheet-item">{{item}}</paper-item>
-                                </template>
-
-                                <div class="rookscore-scoresheet-summary-column" class$="{{computeRoundClass(item)}}">{{buildRoundSummaryText(item)}}</div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </template>
-                </iron-list>
-
-            </div>
+        </div>
         </paper-header-panel>
 
 
@@ -71,23 +73,18 @@
             is: "game-scoreboard",
 
             properties: {
-                game: {
-                  type: Object,
-                }, 
+                players: {
+                    type: Array,
+                },
+
                 scoreboard: {
-                  type: Object,
-                  observer: 'scoreboardChanged'
+                    type: Object
                 }
             },
-            
-            
-            scoreboardChanged: function() {
-              this.$.scoresheetHeader.render();
-            },
-            
+
 
             shouldDrawDividerLine: function(index) {
-                return index != 0 && index < this.scoreboard.length - 1 && (this.scoreboard.length  - index  ) %  this.game.scores.length == 0;
+                return index != 0 && index < this.scoreboard.rounds.length - 1 && (this.scoreboard.rounds.length - index) % this.players.length == 0;
             },
 
             computeRoundClass: function(round) {
@@ -98,6 +95,10 @@
                     return "rookscore-scoresheet-failed-bid";
                 }
 
+            },
+            
+            computeHandNumber: function(index){
+              return this.scoreboard.rounds.length - index;
             },
 
             buildRoundSummaryText: function(round) {
@@ -142,9 +143,9 @@
             },
 
             findPlayerWithID: function(id) {
-                for (var i = 0; i < this.game.scores.length; i++) {
-                    if (this.game.scores[i].player.player_id == id) {
-                        return this.game.scores[i].player;
+                for (var i = 0; i < this.players.length; i++) {
+                    if (this.players[i].player_id == id) {
+                        return this.players[i];
                     }
                 }
             }
