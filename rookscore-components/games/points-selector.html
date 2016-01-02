@@ -10,9 +10,9 @@
 
 
     <template>
-        <iron-media-query query="(min-width: 720px)" query-matches="{{wide}}"></iron-media-query>
-
-        <template is="dom-if" if="{{wide}}">
+      <rookscore-media-query wide="{{wide}}"></rookscore-media-query>
+    
+        <template is="dom-if" if="{{wide}}" restamp>
             <div class="vertical layout flex">
                 <div class="rookscore-round-editor-section-label">{{label}}</div>
                 <div class="horizontal layout">
@@ -28,7 +28,7 @@
             </div>
         </template>
 
-        <template is="dom-if" if="{{!wide}}">
+        <template is="dom-if" if="{{!wide}}" restamp>
             <div class="vertical layout flex">
                 <div class="horizontal layout center">
                     <div class="rookscore-round-editor-section-label flex">{{label}}</div>
@@ -57,8 +57,16 @@
 
 
             properties: {
-                allBidsMode: Boolean,
-                value: false
+                allBidsMode:{
+                  type: Boolean,
+                  value: false
+                },
+                
+                value: {
+                  type: Number,
+                  notify: true
+                }
+                  
 
             },
 

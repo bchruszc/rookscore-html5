@@ -12,31 +12,39 @@
 
 
     <template>
+      
+            <rookscore-media-query wide="{{wide}}"></rookscore-media-query>
 
-        <paper-header-panel>
-            <paper-toolbar>
-                <div class="rookscore-scoreboard-row">
-                    <template is="dom-repeat" items="{{game.scores}}">
-                        <div class="rookscore-scoresheet-header-item">
-                            <template is="dom-if" if="{{item.made_bid}}">
-                                <iron-icon icon="star"></iron-icon>
-                            </template>
-                            <span>{{item.player.first_name}}</span> <span>{{item.player.last_name}}</span>
-                        </div>
-                    </template>
+      
+            <div class="rookscore-scoreboard-row">
+                <template id="scoresheetHeader" is="dom-repeat" items="{{game.scores}}">
+                    <div class="rookscore-scoresheet-header-item">
+                        <template is="dom-if" if="{{item.made_bid}}">
+                            <iron-icon icon="star"></iron-icon>
+                        </template>
+                        <template is="dom-if" if="{{wide}}">
+                          <span>{{item.player.first_name}}</span> <span>{{item.player.last_name}}</span>  
+                        </template>
+
+                        <template is="dom-if" if="{{!wide}}">
+                          <span>{{buildPlayerInitials(item.player)}}</span>  
+                        </template>
+
+                        
+                    </div>
+                </template>
 
 
-                    <!-- fixed-size column to display round summary -->
-                    <div class="rookscore-scoresheet-summary-column"></div>
-                </div>
+                <!-- fixed-size column to display round summary -->
+                <div class="rookscore-scoresheet-summary-column"></div>
+            </div>
 
-            </paper-toolbar>
-            <div>
-                <iron-list items="{{scoreboard}}">
+            <div class="flex vertical layout">
+                <iron-list id="roundList" items="{{scoreboard}}" class="flex">
                     <template>
 
                         <div class="vertical layout">
-                            <template is="dom-if" if="{{shouldDrawDividerLine(index)}}">
+                            <template is="dom-if" if="{{shouldDrawDividerLine(index, item)}}" restamp>
                                 <div class="rookscore-scoresheet-divider-line">Dealer divider line</div>
                             </template>
                             <div class="rookscore-scoreboard-row">
@@ -63,13 +71,23 @@
             is: "game-scoreboard",
 
             properties: {
-                game: Object,
-                scoreboard: Object
+                game: {
+                  type: Object,
+                }, 
+                scoreboard: {
+                  type: Object,
+                  observer: 'scoreboardChanged'
+                }
             },
-
+            
+            
+            scoreboardChanged: function() {
+              this.$.scoresheetHeader.render();
+            },
+            
 
             shouldDrawDividerLine: function(index) {
-                return index % this.game.scores.length == 0 && index > 0;
+                return index != 0 && index < this.scoreboard.length - 1 && (this.scoreboard.length  - index  ) %  this.game.scores.length == 0;
             },
 
             computeRoundClass: function(round) {

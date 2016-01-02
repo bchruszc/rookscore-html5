@@ -1,0 +1,23 @@
+
+<dom-module id="rookscore-media-query">
+  
+  <template>
+            <iron-media-query query="(min-width: 720px)" query-matches="{{wide}}"></iron-media-query>
+
+  </template>
+  
+  <script>
+    Polymer({
+      is: "rookscore-media-query",
+      
+      properties: {
+        wide: {
+          type: Boolean,
+          notify: true
+        }
+      }
+    })
+    
+  </script>
+  
+</dom-module>

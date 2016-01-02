@@ -3,17 +3,28 @@
 
 <dom-module id="games-main">
 
-    <style include="rookscore-styles"></style>
+    <style include="rookscore-styles">
+      
+      :host {
+        --paper-dialog-scrollable: {
+          padding: 3px;
+          width: 90vw;
+        };
+      }
+      
+    </style>
+
+    
 
     <template>
         <game-controller id="gameController" db="[[db]]"></game-controller>
-        <game-scoreboard game="[[game]]" scoreboard="[[scoreboard]]"></game-scoreboard>
+        <game-scoreboard class="flex vertical layout" game="[[game]]" scoreboard="[[scoreboard]]"></game-scoreboard>
 
 
-        <paper-dialog id="addRoundDialog" style="border-left: 10px;  width: 80%">
-            <paper-dialog-scrollable style="border: 10px">
-                <paper-material style="margin-left: 10px; margin-right: 10px; margin-top: 2px;   padding: 10px">
-                    <round-editor id="roundEditor" players="{{listPlayers(game)}}" round="{{round}}"></round-editor>
+        <paper-dialog id="addRoundDialog" style="padding: 0px;" >
+            <paper-dialog-scrollable style="padding: 0px;" >
+                <paper-material style="margin-left: 10px; margin-right: 10px; margin-top: 2px;   padding: 10px; " class="horizontal flex">
+                    <round-editor id="roundEditor" players="{{listPlayers(game)}}" round="{{round}}" ></round-editor>
                 </paper-material>
             </paper-dialog-scrollable>
 
@@ -40,15 +51,22 @@
                 },
 
                 game: {
-                    type: Object,
-                },
+                    type: Object, 
+                    observer: 'gameChanged'
+                }
 
             },
 
             observers: [
                 'gameIdAndDBSet(gameId, db)',
             ],
+            
 
+            gameChanged: function() {
+              if(this.game){
+                this.$.roundEditor.maxPartners = this.game.scores.length == 6 ? 2 : 1;
+              }
+            },
 
             gameIdAndDBSet: function() {
                 var gameIdNum = parseInt(this.gameId);
@@ -106,6 +124,7 @@
                         }
                     }
 
+
                     this.scoreboard = this.buildScoreboard();
                     this.$.gameController.save(this.game);
                     
@@ -150,7 +169,7 @@
                     }
                     thisRound.bid  = bid;
 
-                    scoreboard.push(thisRound);
+                    scoreboard.splice(0,0,thisRound);
                     lastRound = thisRound;
                 }
 
