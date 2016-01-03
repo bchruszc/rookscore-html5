@@ -8,26 +8,30 @@
 
 
 
-    <style  include="rookscore-styles">
-        
-        :host {
+    <style is="custom-style" include="rookscore-styles">
+    :host {
             --paper-header-panel-scroll-container: {
                 @apply(--layout-flex);
                 @apply(--layout-vertical);
             }
+            ;
+            --paper-badge-icon-width: 32px;
+            --paper-badge-icon-height: 32px;
         }
         
+        ;
+    }
     </style>
-    
 
-    
+
+
 
 
     <template>
         <index-db db="{{db}}"></index-db>
 
 
-        <paper-header-panel class="flex vertical layout"  mode="scroll">
+        <paper-header-panel class="flex vertical layout" mode="scroll">
 
             <paper-toolbar>
                 <template is="dom-if" if="{{title}}">
@@ -45,25 +49,56 @@
             <paper-material class="rookscore-main-content flex vertical layout">
                 <iron-pages id="pageController" attr-for-selected="page" selected="[[selected]]" class="flex vertical layout">
                     <div page="home">
-                        <a href="/rookscore-html5/rookscore2.html#!/players">Manage Players</a>
-                        <br>
-                        <a href="/rookscore-html5/rookscore2.html#!/game-setup">Start New Game</a>
-                        <br>
-                        <a href="/rookscore-html5/rookscore2.html#!/games">Games Played on This Device</a>
-                        <br>
+
+
+                        <a href="/rookscore-html5/rookscore2.html#!/players">
+                            <paper-item class="flex horizontal layout center">
+                                <div style="width: 40px; height: 40px; font-size: 18px">
+                                    <paper-badge icon="icons:account-circle"></paper-badge>
+                                </div>
+                                <div style="padding-left: 20px">
+                                    <span>Manage Players</span>
+                                </div>
+                            </paper-item>
+                        </a>
+
+
+                        <a href="/rookscore-html5/rookscore2.html#!/game-setup">
+                            <paper-item class="flex horizontal layout center">
+                                <div style="width: 40px; height: 40px; font-size: 18px">
+                                    <paper-badge icon="av:play-arrow"></paper-badge>
+                                </div>
+                                <div style="padding-left: 20px">
+                                    <span>Start New Game</span>
+                                </div>
+                            </paper-item>
+                        </a>
+
+
+                        <a href="/rookscore-html5/rookscore2.html#!/games">
+                            <paper-item class="flex horizontal layout center">
+                                <div style="width: 40px; height: 40px; font-size: 18px">
+                                    <paper-badge icon="icons:schedule"></paper-badge>
+                                </div>
+                                <div style="padding-left: 20px">
+                                    <span>Games Played on This Device</span>
+                                </div>
+                            </paper-item>
+                        </a>
+
                     </div>
 
-                        <players-main page="players" db="[[db]]" class="flex vertical layout">
-                        </players-main>
+                    <players-main page="players" db="[[db]]" class="flex vertical layout">
+                    </players-main>
 
-                        <game-setup page="game-setup" db="[[db]]" class="flex vertical layout" >
-                        </game-setup>
+                    <game-setup page="game-setup" db="[[db]]" class="flex vertical layout">
+                    </game-setup>
 
-                        <games-list page="games" class="flex vertical layout" db="[[db]]">
-                        </games-list>
+                    <games-list page="games" class="flex vertical layout" db="[[db]]">
+                    </games-list>
 
-                        <games-main page="game" class="flex vertical layout" id="gamesMain" db="[[db]]">
-                        </games-main>
+                    <games-main page="game" class="flex vertical layout" id="gamesMain" db="[[db]]">
+                    </games-main>
                 </iron-pages>
             </paper-material>
 
