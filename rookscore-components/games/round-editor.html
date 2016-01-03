@@ -10,28 +10,31 @@
         }
         
         :host {
-          --paper-item-selected: {
-            @apply(--shadow-elevation-2dp);  
-            background-color: transparent;
-          };
-          
-          --paper-item-focused: {
-            background-color: transparent;
-          };
-          
-          --paper-item-focused-before: {
-            background-color: transparent;
-          }
-          
-          --paper-item: {
-            @apply(--layout-horizontal);
-            @apply(--layout-flex);
-              padding: 0px;
-              @apply(--shadow-elevation-6dp);
-          }
-          
-
-
+            --paper-item-selected: {
+                @apply(--shadow-elevation-2dp);
+                background-color: transparent;
+            }
+            ;
+            --paper-item-focused: {
+                background-color: transparent;
+            }
+            ;
+            --paper-item-focused-before: {
+                background-color: transparent;
+            }
+            --paper-item: {
+                @apply(--layout-horizontal);
+                @apply(--layout-flex);
+                padding: 0px;
+                @apply(--shadow-elevation-6dp);
+            }
+            --paper-listbox: {
+                padding: 0px;
+            }
+            
+            --paper-menu-button: {
+                padding: 0px;
+            }
         }
     </style>
 
@@ -49,7 +52,9 @@
 
 
         <div class="vertical layout flex">
-            <points-selector label="Enter score bid" value="{{bidAmount}}"></points-selector>
+            <points-selector  value="{{bidAmount}}">
+                <div class="rookscore-round-editor-section-label">Score bid: <span>{{bidAmount}}</span></div>
+            </points-selector>
         </div>
 
 
@@ -61,7 +66,9 @@
         </paper-listbox>
 
         <div class="vertical layout flex">
-            <points-selector value="{{madeAmount}}" label="Enter score made:"></points-selector>
+            <points-selector value="{{madeAmount}}" label="Enter score made:">
+                <div class="rookscore-round-editor-section-label">Score made: <span>{{madeAmount}}</span> (<span>{{computeMadeDifferential(bidAmount, madeAmount)}}</span>)</div>
+            </points-selector>
         </div>
 
 
@@ -83,56 +90,60 @@
                     type: Object,
                     notify: true,
                 },
-                
+
                 partnerSelectionHistory: {
-                  type: Array,
-                  value: function() { return [] }
+                    type: Array,
+                    value: function() {
+                        return []
+                    }
                 },
-                
+
                 maxPartners: {
-                  type: Number,
-                  value: 1
+                    type: Number,
+                    value: 1
                 }
-                
+
             },
 
             observers: [
                 'roundInputsChanged(players, bidAmount, madeAmount, selectedPartnerIndices, selectedCallerIndex)',
                 'roundChanged(round, players)'
             ],
-            
+
             listeners: {
-              'iron-select' : 'selectionChanged',
-              'iron-deselect' : 'selectionChanged'
+                'iron-select': 'selectionChanged',
+                'iron-deselect': 'selectionChanged'
             },
-            
+
             selectionChanged: function(e) {
-              
-              
-              if(e.srcElement == this.$.partnerList){
-                var newIndex = this.$.partnerList.indexOf(e.detail.item);
-                
-                if(e.type === 'iron-deselect'){
-                  var curPosition = this.partnerSelectionHistory.indexOf(newIndex);
-                  if(curPosition >= 0){
-                    this.partnerSelectionHistory.splice(curPosition, 1);
-                  }
-                } else if(e.type === 'iron-select'){
-                  //there is a new item selected
-                  if(newIndex >= 0){
-                    var curPosition = this.partnerSelectionHistory.indexOf(newIndex);
-                    if(curPosition >= 0){
-                      this.partnerSelectionHistory.splice(curPosition, 1);
-                    } else if(this.partnerSelectionHistory.length == this.maxPartners){
-                      //remove and deselect
-                      var toDeselect = this.partnerSelectionHistory.splice(0, 1)[0];
-                      this.$.partnerList.select(toDeselect);
+
+
+                if (e.srcElement == this.$.partnerList) {
+                    var newIndex = this.$.partnerList.indexOf(e.detail.item);
+
+                    if (e.type === 'iron-deselect') {
+                        var curPosition = this.partnerSelectionHistory.indexOf(newIndex);
+                        if (curPosition >= 0) {
+                            this.partnerSelectionHistory.splice(curPosition, 1);
+                        }
                     }
-                    
-                    this.partnerSelectionHistory.push(newIndex);
-                  }
+                    else if (e.type === 'iron-select') {
+                        //there is a new item selected
+                        if (newIndex >= 0) {
+                            var curPosition = this.partnerSelectionHistory.indexOf(newIndex);
+                            if (curPosition >= 0) {
+                                this.partnerSelectionHistory.splice(curPosition, 1);
+                            }
+                            else if (this.partnerSelectionHistory.length == this.maxPartners) {
+                                //remove and deselect
+                                var toDeselect = this.partnerSelectionHistory.splice(0, 1)[0];
+                                this.$.partnerList.select(toDeselect);
+                            }
+
+                            this.partnerSelectionHistory.push(newIndex);
+                        }
+                    }
                 }
-              }
             },
 
             ready: function() {
@@ -224,6 +235,15 @@
 
                 return initials;
             },
+            
+            computeMadeDifferential: function(){
+                var diff = this.madeAmount - this.bidAmount;
+                if(diff > 0){
+                    return "+" + diff;
+                } else {
+                    return diff;
+                }
+            }
 
 
         })

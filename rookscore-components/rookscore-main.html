@@ -8,7 +8,16 @@
 
 
 
-    <style  include="rookscore-styles"></style>
+    <style  include="rookscore-styles">
+        
+        :host {
+            --paper-header-panel-scroll-container: {
+                @apply(--layout-flex);
+                @apply(--layout-vertical);
+            }
+        }
+        
+    </style>
     
 
     
@@ -17,7 +26,9 @@
     <template>
         <index-db db="{{db}}"></index-db>
 
-        <div class="flex vertical layout" style="height: 100%">
+
+        <paper-header-panel class="flex vertical layout"  mode="scroll">
+
             <paper-toolbar>
                 <template is="dom-if" if="{{title}}">
                     <paper-item onclick="window.history.back()">
@@ -55,7 +66,8 @@
                         </games-main>
                 </iron-pages>
             </paper-material>
-        </div>
+
+        </paper-header-panel>
     </template>
 
     <script>

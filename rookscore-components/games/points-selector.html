@@ -15,10 +15,10 @@
     
         <template is="dom-if" if="{{wide}}" restamp>
             <div class="vertical layout flex">
-                <div class="rookscore-round-editor-section-label">{{label}}</div>
+                <content></content>
                 <div class="horizontal layout">
                     <div class="flex horizontal layout">
-                        <paper-slider class="flex" value="{{value}}" editable pin snaps max="180" min="{{sliderMinValue(allBidsMode)}}" max-markers="12" step="5" value="150"></paper-slider>
+                        <paper-slider class="flex" immediate-value="{{value}}" pin snaps max="180" min="{{sliderMinValue(allBidsMode)}}" max-markers="12" step="5" value="150"></paper-slider>
                     </div>
 
                     <div class="vertical layout center-justified" style="margin-left: 30px">
@@ -32,7 +32,7 @@
         <template is="dom-if" if="{{!wide}}" restamp>
             <div class="vertical layout flex">
                 <div class="horizontal layout center">
-                    <div class="rookscore-round-editor-section-label flex">{{label}}</div>
+                    <content></content>
                     <paper-menu-button>
                         <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="menu"></paper-icon-button>
                         <paper-menu class="dropdown-content" style="margin: 10px">
@@ -43,7 +43,7 @@
 
                 <div class="horizontal layout">
                     <div class="flex horizontal layout">
-                        <paper-slider class="flex" value="{{value}}" editable pin snaps max="180" min="{{sliderMinValue(allBidsMode)}}" max-markers="12" step="5" value="150"></paper-slider>
+                        <paper-slider class="flex" immediate-value="{{value}}"  pin snaps max="180" min="{{sliderMinValue(allBidsMode)}}" max-markers="12" step="5" value="150"></paper-slider>
                     </div>
                 </div>
             </div>
