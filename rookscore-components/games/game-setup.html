@@ -25,10 +25,7 @@
             </template>
         </iron-list>
 
-        <div class="horizontal layout">
-            <div class="flex"></div>
-            <paper-fab class="rookscore-fab" icon="icons:forward" on-click="startGameClicked" disabled="{{startGameDisabled(selectedPlayers.length)}}">Test!</paper-fab>
-        </div>
+        <paper-fab class="rookscore-fab" icon="icons:forward" on-click="startGameClicked" disabled="{{startGameDisabled(selectedPlayers.length)}}">Test!</paper-fab>
 
 
     </template>
@@ -50,13 +47,14 @@
 
 
             startGameDisabled: function() {
-                if(this.selectedPlayers.length >= 4 && this.selectedPlayers.length <= 6){
+                if (this.selectedPlayers.length >= 4 && this.selectedPlayers.length <= 6) {
                     return false;
-                } else {
+                }
+                else {
                     return true;
                 }
             },
-            
+
             startGameClicked: function() {
 
                 //build a new game definition

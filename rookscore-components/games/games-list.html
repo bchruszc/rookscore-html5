@@ -10,22 +10,7 @@
 
     <style include="rookscore-styles">
         :host {
-            --paper-badge-width: 40px;
-            --paper-badge-height: 40px;
-            --paper-badge: {
-                font-size: 14px;
-                text-align: center;
-            }
-        }
-        
-        .players-in-game {
-            margin-left: 20px;
-            margin-right: 20px
-        }
-        
-        .badge-holder {
-            width: 40px;
-            height: 40px;
+            @apply(--layout-vertical)
         }
     </style>
 
@@ -34,17 +19,17 @@
         <game-controller id="gameController" db="[[db]]" values="{{games}}"></game-controller>
 
 
-        <iron-list items="[[games]]" sort="orderGames">
+        <iron-list items="[[games]]" sort="orderGames" class="flex">
             <template>
                 <div class="rookscore-list-item">
                     <a href="{{buildURLForGame(item)}}">
-                        <div class="horizontal layout center">
+                        <div class="rookscore-badged-item">
 
-                            <div class="badge-holder">
+                            <div class="rookscore-badge-container">
                                 <paper-badge label="{{dateFromGame(item)}}"></paper-badge>
                             </div>
 
-                            <div class="players-in-game flex">{{playersInGame(item)}}</div>
+                            <div class="rookscore-badge-label">{{playersInGame(item)}}</div>
 
                             <div>
                                 <iron-icon icon="{{iconForGame(item)}}"></iron-icon>
@@ -59,12 +44,8 @@
 
         <div class="horizontal layout end-justified">
             <a href="/rookscore-html5/rookscore2.html#!/game-setup">
-
-
                 <paper-fab class="rookscore-fab" icon="add">
-
                 </paper-fab>
-
             </a>
         </div>
 

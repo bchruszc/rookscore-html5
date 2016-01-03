@@ -7,23 +7,27 @@
     <style is="custom-style" include="rookscore-styles">
         :host {
             --paper-dialog: {
-                border: 10px;
+                margin: 10px;
             }
+            ;
+            --paper-dialog-scrollable: {
+                padding: 3px;
+            }
+            ;
         }
         
         .dialog-title {
-          @apply(--paper-font-subhead);
+            @apply(--paper-font-subhead);
         }
-        
     </style>
 
     <template>
 
         <player-controller id="playerController" values="{{players}}" db="[[db]]"></player-controller>
 
-        <paper-dialog id="addPlayerDialog"  style="margin: 5px">
-            <paper-dialog-scrollable style="margin: 10px">
-                <paper-material style="margin-left: 10px; margin-right: 10px; margin-top: 2px;   padding: 10px">
+        <paper-dialog id="addPlayerDialog">
+            <paper-dialog-scrollable class="rookscore-dialog">
+                <paper-material class="rookscore-dialog-content">
                     <div class="dialog-title">Add Player</div>
                     <paper-input id="playerFirstname" label="First Name" value="{{firstName}}"></paper-input>
                     <paper-input id="playerLastname" label="Last Name" value="{{lastName}}"></paper-input>
@@ -43,10 +47,7 @@
         </iron-list>
 
 
-        <div class="horizontal layout">
-            <div class="flex"></div>
-            <paper-fab class="rookscore-fab" icon="icons:add" on-click="addPlayerClicked"></paper-fab>
-        </div>
+        <paper-fab class="rookscore-fab" icon="icons:add" on-click="addPlayerClicked"></paper-fab>
 
 
     </template>
@@ -59,18 +60,18 @@
 
 
             addButtonDisabled: function() {
-                if (!this.firstName || !this.lastName){
+                if (!this.firstName || !this.lastName) {
                     return true;
                 }
-                
-                for(var i = 0; i < this.players.length; i++){
-                    if(this.players[i].first_name === this.firstName && this.players[i].last_name === this.lastName){
+
+                for (var i = 0; i < this.players.length; i++) {
+                    if (this.players[i].first_name === this.firstName && this.players[i].last_name === this.lastName) {
                         return true;
                     }
                 }
-                
+
                 return false;
-                
+
             },
 
 

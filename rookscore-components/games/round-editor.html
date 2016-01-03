@@ -10,6 +10,7 @@
         }
         
         :host {
+            @apply(--layout-vertical);
             --paper-item-selected: {
                 @apply(--shadow-elevation-2dp);
                 background-color: transparent;
@@ -31,45 +32,48 @@
             --paper-listbox: {
                 padding: 0px;
             }
-            
             --paper-menu-button: {
                 padding: 0px;
             }
+        }
+        
+        .rookscore-point-selector {
+            margin-top: 20px
         }
     </style>
 
 
     <template>
-
         <rookscore-media-query wide="{{wide}}"></rookscore-media-query>
 
         <div class="rookscore-round-editor-section-label">Select the caller</div>
+
         <paper-listbox id="callerList" selected="{{selectedCallerIndex}}">
             <template is="dom-repeat" items="{{players}}" as="player">
-                <paper-item class="rookscore-round-editor-player-selection-item"><span class="flex">{{buildPlayerNameText(player)}}</span></paper-item>
+                <paper-item class="rookscore-round-editor-player-selection-item">
+                    <span class="flex">{{buildPlayerNameText(player)}}</span>
+                </paper-item>
             </template>
         </paper-listbox>
 
 
-        <div class="vertical layout flex">
-            <points-selector  value="{{bidAmount}}">
-                <div class="rookscore-round-editor-section-label">Score bid: <span>{{bidAmount}}</span></div>
-            </points-selector>
-        </div>
+        <points-selector class="rookscore-point-selector" value="{{bidAmount}}">
+            <div class="rookscore-round-editor-section-label">Score bid: <span>{{bidAmount}}</span></div>
+        </points-selector>
 
 
         <div class="rookscore-round-editor-section-label">Select the partners</div>
+
         <paper-listbox id="partnerList" multi selected-values="{{selectedPartnerIndices}}">
             <template is="dom-repeat" items="{{players}}" as="player">
-                <paper-item class="rookscore-round-editor-player-selection-item"><span class="flex">{{buildPlayerNameText(player)}}</span></paper-item>
+                <paper-item class="rookscore-round-editor-player-selection-item">
+                    <span class="flex">{{buildPlayerNameText(player)}}</span></paper-item>
             </template>
         </paper-listbox>
 
-        <div class="vertical layout flex">
-            <points-selector value="{{madeAmount}}" label="Enter score made:">
-                <div class="rookscore-round-editor-section-label">Score made: <span>{{madeAmount}}</span> (<span>{{computeMadeDifferential(bidAmount, madeAmount)}}</span>)</div>
-            </points-selector>
-        </div>
+        <points-selector class="rookscore-point-selector" value="{{madeAmount}}">
+            <div class="rookscore-round-editor-section-label">Score made: <span>{{madeAmount}}</span> (<span>{{computeMadeDifferential(bidAmount, madeAmount)}}</span>)</div>
+        </points-selector>
 
 
 
@@ -235,12 +239,13 @@
 
                 return initials;
             },
-            
-            computeMadeDifferential: function(){
+
+            computeMadeDifferential: function() {
                 var diff = this.madeAmount - this.bidAmount;
-                if(diff > 0){
+                if (diff > 0) {
                     return "+" + diff;
-                } else {
+                }
+                else {
                     return diff;
                 }
             }

@@ -5,49 +5,54 @@
 
     <style include="rookscore-styles">
         :host {
-            @apply(--layout-horizontal) @apply(--layout-flex)
+            @apply(--layout-vertical);
+        }
+        
+        .rookscore-point-selector-label-row {
+            @apply(--layout-flex);
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+        }
+        
+        .rookscore-point-selector-label {
+            @apply(--layout-flex);
+        }
+        
+        .rookscore-point-selector-container {
+            @apply(--layout-horizontal);
+            margin-top: 10px;
         }
     </style>
 
 
     <template>
-      <rookscore-media-query wide="{{wide}}"></rookscore-media-query>
-    
-        <template is="dom-if" if="{{wide}}" restamp>
-            <div class="vertical layout flex">
+        <rookscore-media-query wide="{{wide}}"></rookscore-media-query>
+
+        <div class="rookscore-point-selector-label-row">
+            <div class="rookscore-point-selector-label">
                 <content></content>
-                <div class="horizontal layout">
-                    <div class="flex horizontal layout">
-                        <paper-slider class="flex" immediate-value="{{value}}" pin snaps max="180" min="{{sliderMinValue(allBidsMode)}}" max-markers="12" step="5" value="150"></paper-slider>
-                    </div>
-
-                    <div class="vertical layout center-justified" style="margin-left: 30px">
-                        <paper-toggle-button style="margin-bottom: 10px" checked="{{allBidsMode}}"></paper-toggle-button>
-                        <div>All Bids</div>
-                    </div>
-                </div>
             </div>
-        </template>
 
-        <template is="dom-if" if="{{!wide}}" restamp>
-            <div class="vertical layout flex">
-                <div class="horizontal layout center">
-                    <content></content>
-                    <paper-menu-button>
-                        <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="menu"></paper-icon-button>
-                        <paper-menu class="dropdown-content" style="margin: 10px">
-                            <paper-checkbox checked="{{allBidsMode}}">Enable all bids</paper-checkbox>
-                        </paper-menu>
-                    </paper-menu-button>
-                </div>
+            <template is="dom-if" if="{{wide}}">
+                <paper-toggle-button checked="{{allBidsMode}}"></paper-toggle-button>
+                <div>All Bids</div>
+            </template>
 
-                <div class="horizontal layout">
-                    <div class="flex horizontal layout">
-                        <paper-slider class="flex" immediate-value="{{value}}"  pin snaps max="180" min="{{sliderMinValue(allBidsMode)}}" max-markers="12" step="5" value="150"></paper-slider>
-                    </div>
-                </div>
-            </div>
-        </template>
+            <template is="dom-if" if="{{!wide}}">
+                <paper-menu-button>
+                    <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="menu"></paper-icon-button>
+                    <paper-menu class="dropdown-content">
+                        <paper-checkbox checked="{{allBidsMode}}">Enable all bids</paper-checkbox>
+                    </paper-menu>
+                </paper-menu-button>
+            </template>
+        </div>
+
+        <!-- Seems to be needed to force the slider to fill available horizontal space -->
+        <div class="rookscore-point-selector-container">
+            <paper-slider class="flex" immediate-value="{{value}}" pin snaps max="180" min="{{sliderMinValue(allBidsMode)}}" max-markers="12" step="5" value="150"></paper-slider>
+        </div>
+
 
     </template>
 
@@ -58,16 +63,16 @@
 
 
             properties: {
-                allBidsMode:{
-                  type: Boolean,
-                  value: false
+                allBidsMode: {
+                    type: Boolean,
+                    value: false
                 },
-                
+
                 value: {
-                  type: Number,
-                  notify: true
+                    type: Number,
+                    notify: true
                 }
-                  
+
 
             },
 

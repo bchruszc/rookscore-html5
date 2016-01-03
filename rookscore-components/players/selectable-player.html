@@ -12,22 +12,21 @@
                 @apply(--rookscore-badge)
             }
             
-            .selected {
-                font-weight: bold;
-            }
         </style>
 
-        <paper-item class="flex horizontal layout center">
-            <div style="width: 40px; height: 40px; font-size: 18px">
+
+
+        <div class="rookscore-badged-item">
+            <div class="rookscore-badge-container">
                 <paper-badge label="{{buildInitialsForBadge(player)}}"></paper-badge>
             </div>
-            <div class$="{{computePlayerNameListItemClass(selected)}}" style="padding-left: 20px">
+            <div class="rookscore-badge-label" class$="{{computePlayerNameListItemClass(selected)}}">
                 <span>{{player.first_name}}</span> <span>{{player.last_name}}</span>
             </div>
-
             <iron-icon icon="{{iconToShow(selected)}}"></iron-icon>
+        </div>
 
-        </paper-item>
+
     </template>
 
 
@@ -44,7 +43,7 @@
             },
 
             computePlayerNameListItemClass: function() {
-                return this.selected ? "flex selected" : "flex";
+                return "rookscore-badge-label" +  (this.selected ? " rookscore-badged-item-selected" : "");
             },
 
             buildInitialsForBadge: function() {

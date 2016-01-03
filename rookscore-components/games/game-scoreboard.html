@@ -6,9 +6,7 @@
 
 
     <style include="rookscore-styles">
-        :host {
-            @apply(--layout-vertical)
-        }
+
     </style>
 
 
@@ -19,33 +17,21 @@
 
         <div class="rookscore-scoreboard-row">
 
-            <template is="dom-if" if="{{wide}}">
-                <div style="width: 40px">Hand</div>
-            </template>
 
-            <template is="dom-if" if="{{!wide}}">
-                <div style="width: 20px">#</div>
-            </template>
+            <div class="rookscore-scoresheet-hand-number-column">{{buildHandNumberColumnLabel(wide)}}</div>
 
 
             <template id="scoresheetHeader" is="dom-repeat" items="{{scoreboard.summary}}">
                 <div class="rookscore-scoresheet-header-item">
 
+                    <iron-icon icon="star"></iron-icon>
+
                     <template is="dom-if" if="{{wide}}">
-                        <template is="dom-if" if="{{item.made_bid}}">
-                            <iron-icon icon="star"></iron-icon>
-                        </template>
                         <span>{{item.player.first_name}}</span> <span>{{item.player.last_name}}</span>
                     </template>
 
-
                     <template is="dom-if" if="{{!wide}}">
-                        <div class="vertical layout center">
-                            <template is="dom-if" if="{{item.made_bid}}">
-                                <iron-icon icon="star"></iron-icon>
-                            </template>
-                            <span>{{buildPlayerInitials(item.player)}}</span>
-                        </div>
+                        <span>{{buildPlayerInitials(item.player)}}</span>
                     </template>
 
 
@@ -57,40 +43,28 @@
             <div class="rookscore-scoresheet-summary-column"></div>
         </div>
 
-        <div class="flex vertical layout">
-            <iron-list id="roundList" items="{{scoreboard.rounds}}" class="flex">
-                <template>
+        <iron-list id="roundList" items="{{scoreboard.rounds}}" class="flex">
+            <template>
 
-                    <div class="vertical layout">
-                        <template is="dom-if" if="{{shouldDrawDividerLine(index, item)}}">
-                            <div class="rookscore-scoresheet-divider-line center">Dealer divider line</div>
+                <div class="rookscore-scoreboard-row-container">
+                    <template is="dom-if" if="{{shouldDrawDividerLine(index, item)}}">
+                        <div class="rookscore-scoresheet-divider-line">Dealer divider line</div>
+                    </template>
+                    <div class="rookscore-scoreboard-row">
+
+                        <div class="rookscore-scoresheet-hand-number-column">{{computeHandNumber(index, item)}}</div>
+
+                        <template is="dom-repeat" items="{{item.scores}}">
+                            <div class="rookscore-scoresheet-item">{{item}}</paper-item>
                         </template>
-                        <div class="rookscore-scoreboard-row">
 
-                            <template is="dom-if" if="{{wide}}">
-                                <div style="width: 40px">{{computeHandNumber(index, item)}}</div>
-                            </template>
-
-                            <template is="dom-if" if="{{!wide}}">
-                                <div style="width: 20px">{{computeHandNumber(index, item)}}</div>
-                            </template>
-
-
-
-                            <template is="dom-repeat" items="{{item.scores}}">
-                                <div class="rookscore-scoresheet-item">{{item}}</paper-item>
-                            </template>
-
-                            <div class="rookscore-scoresheet-summary-column" class$="{{computeRoundClass(item)}}">{{buildRoundSummaryText(item)}}</div>
-                            </div>
+                        <div class="rookscore-scoresheet-summary-column" class$="{{computeRoundClass(item)}}">{{buildRoundSummaryText(item)}}</div>
 
                         </div>
                     </div>
-                </template>
-            </iron-list>
+            </template>
+        </iron-list>
 
-        </div>
-        </paper-header-panel>
 
 
     </template>
@@ -126,6 +100,10 @@
 
             computeHandNumber: function(index) {
                 return this.scoreboard.rounds.length - index;
+            },
+
+            buildHandNumberColumnLabel: function() {
+                return this.wide ? "Hand" : "#";
             },
 
             buildRoundSummaryText: function(round) {
