@@ -165,11 +165,11 @@
                 this.selectedPartnerIndexes = [];
                 for (var i = 0; i < this.players.length; i++) {
 
-                    if (this.players[i].player_id == this.round.caller) {
+                    if (this.players[i].id == this.round.caller) {
                         this.selectedCallerIndex = i;
                     }
 
-                    if (this.round.partners.indexOf(this.players[i].player_id) >= 0) {
+                    if (this.round.partners.indexOf(this.players[i].id) >= 0) {
                         this.selectedPartnerIndexes.push(i);
                     }
                 }
@@ -186,10 +186,10 @@
                     for (var i = 0; i < this.players.length; i++) {
                         if (this.selectedCallerIndex != i) {
                             if (this.selectedPartnerIndices.indexOf(i) >= 0) {
-                                partnerIds.push(this.players[i].player_id)
+                                partnerIds.push(this.players[i].id)
                             }
                             else {
-                                opponentIds.push(this.players[i].player_id);
+                                opponentIds.push(this.players[i].id);
                             }
                         }
                     }
@@ -198,7 +198,7 @@
 
 
                 if (this.selectedCallerIndex >= 0) {
-                    var callerId = this.players[this.selectedCallerIndex].player_id;
+                    var callerId = this.players[this.selectedCallerIndex].id;
                 }
 
 

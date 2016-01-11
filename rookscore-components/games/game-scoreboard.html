@@ -15,6 +15,7 @@
         <rookscore-media-query wide="{{wide}}"></rookscore-media-query>
 
 
+
         <div class="rookscore-scoreboard-row">
 
 
@@ -24,7 +25,9 @@
             <template id="scoresheetHeader" is="dom-repeat" items="{{scoreboard.summary}}">
                 <div class="rookscore-scoresheet-header-item">
 
-                    <iron-icon icon="star"></iron-icon>
+                    <template is="dom-if" if="{{item.made_bid}}">
+                        <iron-icon icon="star"></iron-icon>
+                    </template>
 
                     <template is="dom-if" if="{{wide}}">
                         <span>{{item.player.first_name}}</span> <span>{{item.player.last_name}}</span>
@@ -40,7 +43,10 @@
 
 
             <!-- fixed-size column to display round summary -->
-            <div class="rookscore-scoresheet-summary-column"></div>
+            <div class="rookscore-scoresheet-summary-column">
+
+
+            </div>
         </div>
 
         <iron-list id="roundList" items="{{scoreboard.rounds}}" class="flex">
@@ -149,7 +155,7 @@
 
             findPlayerWithID: function(id) {
                 for (var i = 0; i < this.players.length; i++) {
-                    if (this.players[i].player_id == id) {
+                    if (this.players[i].id == id) {
                         return this.players[i];
                     }
                 }

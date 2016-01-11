@@ -27,7 +27,12 @@ played_date: "2015-12-15T18:33:44.184000+00:00"-->
 
             objectStoreName: function() {
                 return ObjectStoreController.GAME_OBJECT_STORE_NAME;
+            },
+
+            getKey: function(game) {
+                return game.game_id;
             }
+
         });
     </script>
 

@@ -1,30 +1,70 @@
 <link rel="import" href="../../rookscore-styles.html">
 <link rel="import" href="../../imports.html">
+<script src="../../bower_components/moment/min/moment.min.js"></script>
 
 
 <dom-module id="games-main">
 
     <style include="rookscore-styles">
-      
-      :host {
-        --paper-dialog-scrollable: {
-            padding: 3px;
-        };
-      }
-      
+        :host {
+            --paper-dialog-scrollable: {
+                padding: 3px;
+            }
+            ;
+        }
     </style>
 
-    
+
 
     <template>
         <game-controller id="gameController" db="[[db]]"></game-controller>
+        
+        <iron-ajax  
+            id="submitGameAjax"
+            method="POST" 
+            body="{{game}}"
+            content-type="application/json"
+            headers='{"Api-Key": "12345", "Accept": "application/json"}'
+            url="http://rook2.chruszcz.ca/api/games/"
+            on-response="gameSubmitted"
+            ></iron-ajax>
+        
+        <div class="horizontal layout end-justified">
+
+            <paper-menu-button horizontal-align="left" horizontal-offset="-150">
+                <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+
+
+                    <paper-item on-click="submitGame" enabled="{{!game.entered_date}}">
+                        <iron-icon icon="icons:send"></iron-icon>
+
+                        <paper-item-body>
+                            <div>Submit this game...</div>
+                        </paper-item-body>
+                    </paper-item>
+
+
+                    <paper-item on-click="deleteThisGame">
+                        <iron-icon icon="icons:delete"></iron-icon>
+
+                        <paper-item-body>
+                            <div>Delete this game</div>
+                        </paper-item-body>
+                    </paper-item>
+
+
+                </paper-menu>
+            </paper-menu-button>
+        </div>
+
         <game-scoreboard class="flex vertical layout" players="{{listPlayers(game)}}" scoreboard="[[scoreboard]]"></game-scoreboard>
 
 
-         <paper-dialog id="addRoundDialog">
-            <paper-dialog-scrollable class="rookscore-dialog" >
+        <paper-dialog id="addRoundDialog">
+            <paper-dialog-scrollable class="rookscore-dialog">
                 <paper-material class="rookscore-dialog-content">
-                    <round-editor id="roundEditor" players="{{listPlayers(game)}}" round="{{round}}" ></round-editor>
+                    <round-editor id="roundEditor" players="{{listPlayers(game)}}" round="{{round}}"></round-editor>
                 </paper-material>
             </paper-dialog-scrollable>
 
@@ -36,7 +76,7 @@
         </paper-dialog>
 
 
-        <paper-fab class="rookscore-fab" on-click="addRoundClicked" icon="add"></paper-fab>
+        <paper-fab class="rookscore-fab" on-click="addRoundClicked" icon="add" enabled="{{!game.entered_date}}"></paper-fab>
 
 
     </template>
@@ -52,7 +92,7 @@
                 },
 
                 game: {
-                    type: Object, 
+                    type: Object,
                     observer: 'gameChanged'
                 }
 
@@ -61,12 +101,20 @@
             observers: [
                 'gameIdAndDBSet(gameId, db)',
             ],
-            
+
+
+            deleteThisGame: function() {
+                this.$.gameController.delete(this.game);
+                window.location.href = "/rookscore-html5/rookscore2.html#!/";
+
+            },
+
+
 
             gameChanged: function() {
-              if(this.game){
-                this.$.roundEditor.maxPartners = this.game.scores.length == 6 ? 2 : 1;
-              }
+                if (this.game) {
+                    this.$.roundEditor.maxPartners = this.game.scores.length == 6 ? 2 : 1;
+                }
             },
 
             gameIdAndDBSet: function() {
@@ -110,12 +158,12 @@
             doAddRound: function() {
 
                 var round = this.$.roundEditor.round;
-
+                round.hand_number = this.game.bids.length + 1;
                 if (round) {
                     this.push('game.bids', round);
 
                     for (var i = 0; i < this.game.scores.length; i++) {
-                        var playerId = this.game.scores[i].player.player_id;
+                        var playerId = this.game.scores[i].player.id;
                         var currentScore = this.game.scores[i].score;
 
                         this.game.scores[i].score = this.computeUpdatedScore(playerId, currentScore, round, this.game.scores.length);
@@ -128,7 +176,7 @@
 
                     this.scoreboard = this.buildScoreboard();
                     this.$.gameController.save(this.game);
-                    
+
                     this.$.roundEditor.reset();
                     this.$.addRoundDialog.close();
                 }
@@ -144,19 +192,21 @@
                 scoreboard.rounds = [];
 
                 this.game.scores.sort(function(a, b) {
-                    
-                    if(a.made_bid == b.made_bid){
+
+                    if (a.made_bid == b.made_bid) {
                         return b.score - a.score;
-                    } else if(a.made_bid && !b.made_bid){
+                    }
+                    else if (a.made_bid && !b.made_bid) {
                         return -1;
-                    } else if(b.made_bid && !a.made_bid){
+                    }
+                    else if (b.made_bid && !a.made_bid) {
                         return 1;
                     }
                 });
 
                 var lastRound = {};
                 lastRound.scores = [];
-                
+
                 for (var i = 0; i < this.game.scores.length; i++) {
                     lastRound.scores.push(0);
                 }
@@ -167,16 +217,16 @@
                     thisRound.scores = [];
 
                     for (var j = 0; j < this.game.scores.length; j++) {
-                        thisRound.scores[j] = this.computeUpdatedScore(this.game.scores[j].player.player_id, lastRound.scores[j], bid, this.game.scores.length);
+                        thisRound.scores[j] = this.computeUpdatedScore(this.game.scores[j].player.id, lastRound.scores[j], bid, this.game.scores.length);
                     }
-                    thisRound.bid  = bid;
+                    thisRound.bid = bid;
 
                     //rounds is reverse-chronological order (most recent round on top - it's the scoreboard view model)
-                    scoreboard.rounds.splice(0,0,thisRound);
+                    scoreboard.rounds.splice(0, 0, thisRound);
                     lastRound = thisRound;
                 }
-                
-                scoreboard.summary =  JSON.parse(JSON.stringify(this.game.scores));
+
+                scoreboard.summary = JSON.parse(JSON.stringify(this.game.scores));
 
                 return scoreboard;
             },
@@ -205,6 +255,14 @@
                 }
 
                 return newScore;
+            },
+            
+            submitGame: function() {
+                this.$.submitGameAjax.generateRequest();
+            },
+            
+            gameSubmitted: function() {
+                this.game.entered_date = moment().format("YYYY-MM-DD HH:mm:ss.SSSSSSZZ");
             }
 
         });

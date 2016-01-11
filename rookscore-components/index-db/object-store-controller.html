@@ -66,14 +66,16 @@
         load: function() {
             var transaction = this.db.transaction(this.objectStoreName()); //readonly transaction
             var objectStore = transaction.objectStore(this.objectStoreName()); //on players
-            this.values = [];
+            var values = [];
             var that = this;
             objectStore.openCursor().onsuccess = function(event) {
                 var cursor = event.target.result;
                 if (cursor) {
                     //polymer array mutation
-                    that.push('values', cursor.value);
+                    values.push(cursor.value);
                     cursor.continue();
+                } else {
+                    that.values = values;
                 }
             };
         },
@@ -94,6 +96,19 @@
         save: function(toSave) {
             var objectStore = this.db.transaction(this.objectStoreName(), "readwrite").objectStore(this.objectStoreName());
             var request = objectStore.put(toSave);
+            var that = this;
+            request.onsuccess = function(event) {
+                that.fire('iron-signal', {
+                    name: 'rookscore-db-changed',
+                    data: event.detail
+                });
+            };
+
+        },
+
+        delete: function(toDelete) {
+            var objectStore = this.db.transaction(this.objectStoreName(), "readwrite").objectStore(this.objectStoreName());
+            var request = objectStore.delete(this.getKey(toDelete));
             var that = this;
             request.onsuccess = function(event) {
                 that.fire('iron-signal', {
