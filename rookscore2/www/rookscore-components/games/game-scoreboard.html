@@ -29,24 +29,32 @@
                         <iron-icon icon="star"></iron-icon>
                     </template>
 
+                    <template is="dom-if" if="{{!item.made_bid}}">
+                        <div class="flex"></div>
+                    </template>
+
+
                     <template is="dom-if" if="{{wide}}">
-                        <span>{{item.player.first_name}}</span> <span>{{item.player.last_name}}</span>
+                        <div>
+                            <span>{{item.player.first_name}}</span> <span>{{item.player.last_name}}</span>
+                        </div>
+
                     </template>
 
                     <template is="dom-if" if="{{!wide}}">
                         <span>{{buildPlayerInitials(item.player)}}</span>
                     </template>
 
-
                 </div>
-            </template>
+        </div>
+        </template>
 
 
-            <!-- fixed-size column to display round summary -->
-            <div class="rookscore-scoresheet-summary-column">
+        <!-- fixed-size column to display round summary -->
+        <div class="rookscore-scoresheet-summary-column">
+<content></content>
 
-
-            </div>
+        </div>
         </div>
 
         <iron-list id="roundList" items="{{scoreboard.rounds}}" class="flex">
@@ -58,16 +66,20 @@
                     </template>
                     <div class="rookscore-scoreboard-row">
 
-                        <div class="rookscore-scoresheet-hand-number-column">{{computeHandNumber(index, item)}}</div>
+                        <div class="rookscore-scoresheet-hand-number-column">
+                            <span>{{computeHandNumber(index, item)}}</span>
+                        </div>
 
                         <template is="dom-repeat" items="{{item.scores}}">
-                            <div class="rookscore-scoresheet-item">{{item}}</paper-item>
+                            <div class="rookscore-scoresheet-item">
+                                <span>{{item}}</span>
+                            </div>
                         </template>
 
                         <div class="rookscore-scoresheet-summary-column" class$="{{computeRoundClass(item)}}">{{buildRoundSummaryText(item)}}</div>
 
-                        </div>
                     </div>
+                </div>
             </template>
         </iron-list>
 

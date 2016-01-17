@@ -11,6 +11,13 @@
                 padding: 3px;
             }
             ;
+            
+            --paper-icon-button: {
+                padding: 0px;
+                height: 24px;
+            }
+            
+            
         }
     </style>
 
@@ -29,7 +36,10 @@
             on-response="gameSubmitted"
             ></iron-ajax>
         
-        <div class="horizontal layout end-justified">
+
+
+        <game-scoreboard class="flex vertical layout" players="{{listPlayers(game)}}" scoreboard="[[scoreboard]]">
+                    <div class="horizontal layout end-justified">
 
             <paper-menu-button horizontal-align="left" horizontal-offset="-150">
                 <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
@@ -57,8 +67,7 @@
                 </paper-menu>
             </paper-menu-button>
         </div>
-
-        <game-scoreboard class="flex vertical layout" players="{{listPlayers(game)}}" scoreboard="[[scoreboard]]"></game-scoreboard>
+        </game-scoreboard>
 
 
         <paper-dialog id="addRoundDialog">
