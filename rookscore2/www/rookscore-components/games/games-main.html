@@ -11,13 +11,10 @@
                 padding: 3px;
             }
             ;
-            
             --paper-icon-button: {
                 padding: 0px;
                 height: 24px;
             }
-            
-            
         }
     </style>
 
@@ -25,48 +22,49 @@
 
     <template>
         <game-controller id="gameController" db="[[db]]"></game-controller>
-        
-        <iron-ajax  
-            id="submitGameAjax"
-            method="POST" 
-            body="{{game}}"
-            content-type="application/json"
-            headers='{"Api-Key": "12345", "Accept": "application/json"}'
-            url="http://rook2.chruszcz.ca/api/games/"
-            on-response="gameSubmitted"
-            ></iron-ajax>
-        
+
+        <iron-ajax id="submitGameAjax" method="POST" body="{{game}}" content-type="application/json" headers='{"Api-Key": "12345", "Accept": "application/json"}' url="http://rook2.chruszcz.ca/api/games/" on-response="gameSubmitted"></iron-ajax>
 
 
-        <game-scoreboard class="flex vertical layout" players="{{listPlayers(game)}}" scoreboard="[[scoreboard]]">
-                    <div class="horizontal layout end-justified">
 
-            <paper-menu-button horizontal-align="left" horizontal-offset="-150">
-                <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
-                <paper-menu class="dropdown-content">
+        <game-scoreboard class="flex vertical layout" players="{{listPlayers(game)}}" scoreboard="[[scoreboard]]" selected-rounds="{{selectedRounds}}">
+            <div class="horizontal layout end-justified">
 
-
-                    <paper-item on-click="submitGame" enabled="{{!game.entered_date}}">
-                        <iron-icon icon="icons:send"></iron-icon>
-
-                        <paper-item-body>
-                            <div>Submit this game...</div>
-                        </paper-item-body>
-                    </paper-item>
+                <paper-menu-button horizontal-align="left" horizontal-offset="-150">
+                    <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+                    <paper-menu class="dropdown-content">
 
 
-                    <paper-item on-click="deleteThisGame">
-                        <iron-icon icon="icons:delete"></iron-icon>
+                        <paper-item on-click="deleteSelectedRound" disabled="{{!canDeleteRound(selectedRounds)}}">
+                            <iron-icon icon="icons:send"></iron-icon>
 
-                        <paper-item-body>
-                            <div>Delete this game</div>
-                        </paper-item-body>
-                    </paper-item>
+                            <paper-item-body>
+                                <div>Delete round...</div>
+                            </paper-item-body>
+                        </paper-item>
 
 
-                </paper-menu>
-            </paper-menu-button>
-        </div>
+                        <paper-item on-click="submitGame" disabled="{{game.entered_date}}">
+                            <iron-icon icon="icons:send"></iron-icon>
+
+                            <paper-item-body>
+                                <div>Submit this game...</div>
+                            </paper-item-body>
+                        </paper-item>
+
+
+                        <paper-item on-click="deleteThisGame">
+                            <iron-icon icon="icons:delete"></iron-icon>
+
+                            <paper-item-body>
+                                <div>Delete this game</div>
+                            </paper-item-body>
+                        </paper-item>
+
+
+                    </paper-menu>
+                </paper-menu-button>
+            </div>
         </game-scoreboard>
 
 
@@ -119,6 +117,58 @@
             },
 
 
+            canDeleteRound: function(selectedRounds) {
+                return !!selectedRounds;
+            },
+
+            deleteSelectedRound: function() {
+                if (this.canDeleteRound(this.selectedRounds)) {
+                    this.splice('game.bids', this.game.bids.indexOf(this.selectedRounds.bid), 1);
+
+                    //clear selection
+                    this.selectedRounds = [];
+
+                    //build the scoreboard using the currnent-player ordering. This could be wrong, but it will provide the correct scores for all plater                    
+                    var tempScoreboard = this.buildScoreboard();
+                    if (tempScoreboard.rounds.length > 0) {
+
+                        //most recent round's result is first element in the array
+                        var latestRoundScores = tempScoreboard.rounds[0].scores;
+                        for (var i = 0; i < latestRoundScores.length; i++) {
+                            this.game.scores[i].score = latestRoundScores[i];
+                            this.game.scores[i].made_bid = false;
+
+                        }
+
+
+                        //now, for each remaining round, set the made_bid propery if caller made it.
+                        for (var i = 0; i < this.game.bids.length; i++) {
+                            var round = this.game.bids[i];
+                            if (round.points_made >= round.points_bid) {
+                                for (var j = 0; j < this.game.scores.length; j++) {
+                                    if (this.game.scores[j].player.id == round.caller) {
+                                        this.game.scores[j].made_bid = true;
+                                        break;
+                                    }
+                                }
+
+                            }
+                        }
+
+                    }
+                    else {
+                        for (var i = 0; i < this.game.scores.length; i++) {
+                            this.game.scores[i].score = 0;
+                            this.game.scores[i].made_bid = false;
+                        }
+                    }
+
+                    //rebuild scoreboard with corrected player ordering
+                    this.scoreboard = this.buildScoreboard();
+
+                    this.$.gameController.save(this.game);
+                }
+            },
 
             gameChanged: function() {
                 if (this.game) {
@@ -171,6 +221,7 @@
                 round.hand_number = this.game.bids.length + 1;
                 if (round) {
                     this.push('game.bids', round);
+
 
                     for (var i = 0; i < this.game.scores.length; i++) {
                         var playerId = this.game.scores[i].player.id;
@@ -266,11 +317,11 @@
 
                 return newScore;
             },
-            
+
             submitGame: function() {
                 this.$.submitGameAjax.generateRequest();
             },
-            
+
             gameSubmitted: function() {
                 this.game.entered_date = moment().format("YYYY-MM-DD HH:mm:ss.SSSSSSZZ");
             }

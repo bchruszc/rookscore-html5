@@ -6,7 +6,9 @@
 
 
     <style include="rookscore-styles">
-
+        .rookscore-scoresheet-row-selected {
+            background-color: #f5f5f5;
+        }
     </style>
 
 
@@ -57,10 +59,10 @@
         </div>
         </div>
 
-        <iron-list id="roundList" items="{{scoreboard.rounds}}" class="flex">
+        <iron-list id="roundList" items="{{scoreboard.rounds}}" class="flex" selection-enabled selected-items="{{selectedRounds}}">
             <template>
 
-                <div class="rookscore-scoreboard-row-container">
+                <div class="rookscore-scoreboard-row-container" class$="[[computedScoresheetRowClass(selected)]]">
                     <template is="dom-if" if="{{shouldDrawDividerLine(index, item)}}">
                         <div class="rookscore-scoresheet-divider-line">Dealer divider line</div>
                     </template>
@@ -98,6 +100,11 @@
 
                 scoreboard: {
                     type: Object
+                },
+                
+                selectedRounds: {
+                    type: Array,
+                    notify: true
                 }
             },
 
@@ -114,6 +121,14 @@
                     return "rookscore-scoresheet-failed-bid";
                 }
 
+            },
+
+            computedScoresheetRowClass: function(selected){
+                if(selected){
+                    return "rookscore-scoresheet-row-selected";
+                } else {
+                    return "";
+                }
             },
 
             computeHandNumber: function(index) {
