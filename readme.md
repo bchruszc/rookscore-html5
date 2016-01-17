@@ -2,8 +2,8 @@ To get up and running:
 - Install node.js
 - Ensure node is up to date and npm is working
 - Install bower via npm
-- From this directory, run bower update to fetch dependencies
-- 
+- From rookscore2/www, run bower update to fetch dependencies
+
 
 To run in browser:
 - host rookscore2/www as the root of web server
