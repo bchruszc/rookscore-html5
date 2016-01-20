@@ -88,7 +88,7 @@
             },
 
             dateFromGame: function(game) {
-                var date = moment(game.created_date);
+                var date = moment(game.played_date);
                 if (date.isValid()) {
                     return date.format("MMM D");
                 }

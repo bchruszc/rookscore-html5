@@ -57,7 +57,7 @@
         </paper-listbox>
 
 
-        <points-selector class="rookscore-point-selector" value="{{bidAmount}}">
+        <points-selector id="bidAmountSelector" class="rookscore-point-selector" value="{{bidAmount}}">
             <div class="rookscore-round-editor-section-label">Score bid: <span>{{bidAmount}}</span></div>
         </points-selector>
 
@@ -71,8 +71,8 @@
             </template>
         </paper-listbox>
 
-        <points-selector class="rookscore-point-selector" value="{{madeAmount}}">
-            <div class="rookscore-round-editor-section-label">Score made: <span>{{madeAmount}}</span> (<span>{{computeMadeDifferential(bidAmount, madeAmount)}}</span>)</div>
+        <points-selector id="scoreMadeSelector" class="rookscore-point-selector" value="{{madeAmount}}">
+            <div class="rookscore-round-editor-section-label">Score made: <span>{{madeAmount}}</span> (Lost: <span>{{computeMadeDifferential(bidAmount, madeAmount)}}</span>)</div>
         </points-selector>
 
 
@@ -161,6 +161,9 @@
                 this.selectedCallerIndex = -1;
                 this.bidAmount = 150;
                 this.madeAmount = 150;
+                this.$.bidAmountSelector.reset();
+                this.$.scoreMadeSelector.reset();
+                
             },
 
             roundChanged: function() {
@@ -243,13 +246,7 @@
             },
 
             computeMadeDifferential: function() {
-                var diff = this.madeAmount - this.bidAmount;
-                if (diff > 0) {
-                    return "+" + diff;
-                }
-                else {
-                    return diff;
-                }
+                return 180 - this.madeAmount;
             }
 
 
