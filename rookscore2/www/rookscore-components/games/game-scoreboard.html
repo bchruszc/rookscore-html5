@@ -21,7 +21,11 @@
         <div class="rookscore-scoreboard-row">
 
 
-            <div class="rookscore-scoresheet-hand-number-column">{{buildHandNumberColumnLabel(wide)}}</div>
+            <template is="dom-if" if="{{wide}}">
+                <div class="rookscore-scoresheet-hand-number-column">{{buildHandNumberColumnLabel(wide)}}</div>
+            </template>
+
+
 
 
             <template id="scoresheetHeader" is="dom-repeat" items="{{scoreboard.summary}}">
@@ -54,7 +58,7 @@
 
         <!-- fixed-size column to display round summary -->
         <div class="rookscore-scoresheet-summary-column">
-<content></content>
+            <content></content>
 
         </div>
         </div>
@@ -68,9 +72,12 @@
                     </template>
                     <div class="rookscore-scoreboard-row">
 
-                        <div class="rookscore-scoresheet-hand-number-column">
-                            <span>{{computeHandNumber(index, item)}}</span>
-                        </div>
+
+                        <template is="dom-if" if="{{wide}}">
+                            <div class="rookscore-scoresheet-hand-number-column">
+                                <span>{{computeHandNumber(index, item)}}</span>
+                            </div>
+                        </template>
 
                         <template is="dom-repeat" items="{{item.scores}}">
                             <div class="rookscore-scoresheet-item">
@@ -101,7 +108,7 @@
                 scoreboard: {
                     type: Object
                 },
-                
+
                 selectedRounds: {
                     type: Array,
                     notify: true
@@ -123,10 +130,11 @@
 
             },
 
-            computedScoresheetRowClass: function(selected){
-                if(selected){
+            computedScoresheetRowClass: function(selected) {
+                if (selected) {
                     return "rookscore-scoresheet-row-selected";
-                } else {
+                }
+                else {
                     return "";
                 }
             },
