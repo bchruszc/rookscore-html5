@@ -1,0 +1,69 @@
+<link rel="import" href="../../rookscore-styles.html">
+<link rel="import" href="../../imports.html">
+
+<dom-module id="selectable-player">
+
+
+    <template>
+
+
+        <style include="rookscore-styles">
+            :host {
+                @apply(--rookscore-badge)
+            }
+            
+        </style>
+
+
+
+        <div class="rookscore-badged-item">
+            <div class="rookscore-badge-container">
+                <paper-badge label="{{buildInitialsForBadge(player)}}"></paper-badge>
+            </div>
+            <div class="rookscore-badge-label" class$="{{computePlayerNameListItemClass(selected)}}">
+                <span>{{player.first_name}}</span> <span>{{player.last_name}}</span>
+            </div>
+            <iron-icon icon="{{iconToShow(selected)}}"></iron-icon>
+        </div>
+
+
+    </template>
+
+
+    <script>
+        Polymer({
+            is: "selectable-player",
+
+            properties: {
+                player: {
+                    type: Object
+                },
+
+                selected: Boolean
+            },
+
+            computePlayerNameListItemClass: function() {
+                return "rookscore-badge-label" +  (this.selected ? " rookscore-badged-item-selected" : "");
+            },
+
+            buildInitialsForBadge: function() {
+                var initials = "";
+                if (this.player.first_name) {
+                    initials += this.player.first_name.charAt(0);
+                }
+
+                if (this.player.last_name) {
+                    initials += this.player.last_name.charAt(0);
+                }
+
+                return initials;
+            },
+
+            iconToShow: function() {
+                return this.selected ? "check" : "";
+            }
+
+        })
+    </script>
+
+</dom-module>

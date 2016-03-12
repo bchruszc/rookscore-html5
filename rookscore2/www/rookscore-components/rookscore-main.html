@@ -1,0 +1,152 @@
+<link rel="import" href="../rookscore-styles.html">
+<link rel="import" href="../imports.html">
+
+<script src="../bower_components/page/page.js"></script>
+
+
+<dom-module id="rookscore-main">
+
+
+
+    <style is="custom-style" include="rookscore-styles">
+    :host {
+            --paper-header-panel-scroll-container: {
+                @apply(--layout-flex);
+                @apply(--layout-vertical);
+            }
+            ;
+            --paper-badge-icon-width: 32px;
+            --paper-badge-icon-height: 32px;
+        }
+        
+        ;
+    }
+    </style>
+
+
+
+
+
+    <template>
+        <index-db db="{{db}}"></index-db>
+
+
+        <paper-header-panel class="flex vertical layout" mode="scroll">
+
+            <paper-toolbar>
+                <template is="dom-if" if="{{title}}">
+                    <div onclick="window.history.back()">
+                        <iron-icon icon="arrow-back"></iron-icon>
+                    </div>
+                </template>
+
+                <div class="rookscore-titlebar-navlocation">{{title}}</div>
+
+                <div class="rookscore-titlebar-title">Rookscore 2.0</div>
+
+            </paper-toolbar>
+
+            <paper-material class="rookscore-main-content">
+                <iron-pages id="pageController" attr-for-selected="page" selected="[[selected]]" class="flex vertical layout">
+                    <div page="home">
+                        <a href="/players">
+                            <div class="rookscore-badged-item">
+                                <div class="rookscore-badge-container">
+                                    <paper-badge icon="icons:account-circle"></paper-badge>
+                                </div>
+                                <div class="rookscore-badge-label">
+                                    <span>Manage Players</span>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="/game-setup">
+                            <div class="rookscore-badged-item">
+
+                                <div class="rookscore-badge-container">
+                                    <paper-badge icon="av:play-arrow"></paper-badge>
+                                </div>
+                                <div class="rookscore-badge-label">
+                                    <span>Start New Game</span>
+                                </div>
+                            </div>
+                        </a>
+
+
+                        <a href="/games">
+                            <div class="rookscore-badged-item">
+                                <div class="rookscore-badge-container">
+                                    <paper-badge icon="icons:schedule"></paper-badge>
+                                </div>
+                                <div class="rookscore-badge-label">
+                                    <span>Games Played on This Device</span>
+                                </div>
+                            </div>
+                        </a>
+
+                    </div>
+
+
+                    <players-main page="players" db="[[db]]" class="flex vertical layout">
+                    </players-main>
+
+                    <game-setup page="game-setup" db="[[db]]" class="flex vertical layout">
+                    </game-setup>
+
+                    <games-list page="games" db="[[db]]" class="flex vertical layout">
+                    </games-list>
+
+                    <games-main page="game" id="gamesMain" db="[[db]]" class="flex vertical layout">
+                    </games-main>
+
+                </iron-pages>
+            </paper-material>
+
+        </paper-header-panel>
+    </template>
+
+    <script>
+        Polymer({
+            is: "rookscore-main",
+
+            ready: function() {
+
+                var that = this;
+
+
+                page('/players', function(ctx, next) {
+                    that.selected = "players";
+                    that.title = "Player List";
+                });
+
+                page('/game-setup', function(ctx, next) {
+                    that.selected = "game-setup";
+                    that.title = "Setup Game - Select Players";
+                });
+
+                page('/games', function(ctx, next) {
+                    that.selected = "games";
+                    that.title = "Games on This Device";
+                });
+
+                page('/games/:gameId', function(ctx, next) {
+                    that.selected = "game";
+                    that.$.gamesMain.gameId = ctx.params.gameId;
+                    that.title = "Game";
+                });
+
+                page('*', function(ctx, next) {
+                    that.selected = "home";
+                    that.title = "";
+                });
+
+
+                // add #! before urls
+                page({
+                    hashbang: true
+                });
+
+                page.start();
+            }
+        })
+    </script>
+</dom-module>

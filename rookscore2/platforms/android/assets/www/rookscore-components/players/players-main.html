@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<link rel="import" href="../../rookscore-styles.html">
+<link rel="import" href="../../imports.html">
+
+<dom-module id="players-main">
+
+    <style is="custom-style" include="rookscore-styles">
+        :host {
+            --paper-dialog: {
+                margin: 10px;
+            }
+            ;
+            --paper-dialog-scrollable: {
+                padding: 3px;
+            }
+            ;
+        }
+        
+        .dialog-title {
+            @apply(--paper-font-subhead);
+        }
+    </style>
+
+    <template>
+
+
+        <iron-ajax id="remotePlayersAjax" url="http://rook2.chruszcz.ca/api/players/" handle-as="json" on-response="onRemotePlayersResponse">
+        </iron-ajax>
+
+
+        <player-controller id="playerController" values="{{players}}" db="[[db]]"></player-controller>
+
+
+
+        <paper-dialog id="addPlayerDialog">
+            <paper-dialog-scrollable class="rookscore-dialog">
+                <paper-material class="rookscore-dialog-content">
+                    <div class="dialog-title">Add Player</div>
+                    <paper-input id="playerFirstname" label="First Name" value="{{firstName}}" autocapitalize="words"></paper-input>
+                    <paper-input id="playerLastname" label="Last Name" value="{{lastName}}"autocapitalize="words"></paper-input>
+                </paper-material>
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button on-click="doCancel">Cancel</paper-button>
+                <paper-button on-click="doAdd" disabled="{{addButtonDisabled(firstName, lastName)}}">Add</paper-button>
+            </div>
+        </paper-dialog>
+
+
+        <div class="layout horizontal end-justified">
+            <paper-menu-button horizontal-align="left" horizontal-offset="-150">
+                <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+
+
+                    <paper-item on-click="syncRemotePlayers">
+                        <iron-icon icon="notification:sync"></iron-icon>
+
+                        <paper-item-body>
+                            <div>Sync with remote players</div>
+                        </paper-item-body>
+                    </paper-item>
+
+
+                    <paper-item disabled="{{!shouldDisplayDelete(playersToDelete.length)}}" on-click="deletePlayers">
+                        <iron-icon icon="icons:delete"></iron-icon>
+
+                        <paper-item-body>
+                            <div>Delete selected</div>
+                        </paper-item-body>
+                    </paper-item>
+
+
+                </paper-menu>
+            </paper-menu-button>
+        </div>
+
+        <iron-list class="flex" items="[[players]]" as="player" selected-items="{{playersToDelete}}" selection-enabled multi-selection>
+            <template>
+                <selectable-player class="rookscore-list-item flex" player="[[player]]" selected="[[selected]]"></selectable-player>
+            </template>
+        </iron-list>
+
+
+
+
+        <paper-fab class="rookscore-fab" icon="icons:add" on-click="addPlayerClicked"></paper-fab>
+
+
+    </template>
+
+
+    <script>
+        Polymer({
+            is: "players-main",
+
+            deletePlayers: function(e) {
+                while (this.playersToDelete.length > 0) {
+                    this.$.playerController.delete(this.splice('playersToDelete', 0, 1)[0]);
+                }
+            },
+
+            shouldDisplayDelete: function() {
+                return this.playersToDelete.length > 0;
+            },
+
+            addButtonDisabled: function() {
+                if (!this.firstName || !this.lastName) {
+                    return true;
+                }
+
+                for (var i = 0; i < this.players.length; i++) {
+                    if (this.players[i].first_name === this.firstName && this.players[i].last_name === this.lastName) {
+                        return true;
+                    }
+                }
+
+                return false;
+
+            },
+
+
+            addPlayerClicked: function() {
+                this.$.addPlayerDialog.open();
+            },
+
+            doCancel: function() {
+                this.$.addPlayerDialog.close();
+            },
+
+            doAdd: function() {
+                //validation
+                if (this.firstName && this.lastName) {
+                    this.$.playerController.add({
+                        'first_name': this.firstName,
+                        'last_name': this.lastName
+                    });
+
+                    //clear input
+                    this.firstName = null;
+                    this.lastName = null;
+
+                    this.$.addPlayerDialog.close();
+                }
+
+            },
+
+            syncRemotePlayers: function() {
+                this.$.remotePlayersAjax.generateRequest();
+            },
+
+            onRemotePlayersResponse: function() {
+
+                if (this.$.remotePlayersAjax.lastResponse) {
+                    for (var i = 0; i < this.$.remotePlayersAjax.lastResponse.length; i++) {
+
+
+                        var remotePlayer = this.$.remotePlayersAjax.lastResponse[i];
+
+                        //examine local players list
+                        //if no player with same first_name, last_name, add
+                        //if player with same first_name, last_name, ensure ID matches
+
+                        var foundMatch = false;
+                        for (var j = 0; j < this.players.length; j++) {
+                            var localPlayer = this.players[j];
+                            if (localPlayer.first_name === remotePlayer.first_name && localPlayer.last_name === remotePlayer.last_name) {
+                                foundMatch = true;
+                                if (localPlayer.player_id != remotePlayer.player_id) {
+                                    localPlayer.player_id = remotePlayer.player_id;
+                                    localPlayer.id = remotePlayer.id;
+                                    this.$.playerController.update(localPlayer);
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!foundMatch) {
+                            //no match - add
+                            this.$.playerController.add({
+                                first_name: remotePlayer.first_name,
+                                last_name: remotePlayer.last_name,
+                                player_id: remotePlayer.player_id,
+                                id: remotePlayer.id
+                            });
+
+                        }
+
+                    }
+                }
+            }
+
+        });
+    </script>
+
+</dom-module>

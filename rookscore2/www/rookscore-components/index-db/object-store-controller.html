@@ -1,0 +1,124 @@
+<script>
+    //global.
+
+    ObjectStoreController = {
+
+
+        PLAYER_OBJECT_STORE_NAME: "synchable_players",
+        GAME_OBJECT_STORE_NAME: "games",
+
+
+        properties: {
+            values: {
+                type: Array,
+                notify: true,
+                value: function() {
+                    return [];
+                }
+            },
+
+
+            db: {
+                type: Object,
+                observer: 'onDBSet'
+            }
+        },
+
+
+        attached: function() {
+            this.signal = document.createElement('iron-signals');
+            this.signal.addEventListener('iron-signal-rookscore-db-changed', this.onDBChange.bind(this));
+            Polymer.dom(this.root).appendChild(this.signal);
+        },
+
+
+        onDBChange: function() {
+            this.load();
+        },
+
+        onDBSet: function() {
+            this.load();
+        },
+
+        objectStoreName: function() {
+            //override!
+        },
+
+
+        add: function(toAdd, onSuccessCallback) {
+            var objectStore = this.db.transaction(this.objectStoreName(), "readwrite").objectStore(this.objectStoreName());
+            var request = objectStore.add(toAdd);
+            var that = this;
+            request.onsuccess = function(event) {
+
+                if (onSuccessCallback) {
+                    onSuccessCallback(event.target.result);
+                }
+
+                that.fire('iron-signal', {
+                    name: 'rookscore-db-changed',
+                    data: event.detail
+                });
+
+            };
+        },
+
+        load: function() {
+            var transaction = this.db.transaction(this.objectStoreName()); //readonly transaction
+            var objectStore = transaction.objectStore(this.objectStoreName()); //on players
+            var values = [];
+            var that = this;
+            objectStore.openCursor().onsuccess = function(event) {
+                var cursor = event.target.result;
+                if (cursor) {
+                    //polymer array mutation
+                    values.push(cursor.value);
+                    cursor.continue();
+                } else {
+                    that.values = values;
+                }
+            };
+        },
+
+        get: function(id, resultCallback) {
+            var transaction = this.db.transaction(this.objectStoreName()); //readonly transaction
+            var request = transaction.objectStore(this.objectStoreName()).get(id);
+            request.onsuccess = function(event) {
+                resultCallback(request.result);
+            }
+
+            request.onerror = function(event) {
+                resultCallback(undefined);
+            }
+        },
+
+
+        save: function(toSave) {
+            var objectStore = this.db.transaction(this.objectStoreName(), "readwrite").objectStore(this.objectStoreName());
+            var request = objectStore.put(toSave);
+            var that = this;
+            request.onsuccess = function(event) {
+                that.fire('iron-signal', {
+                    name: 'rookscore-db-changed',
+                    data: event.detail
+                });
+            };
+
+        },
+
+        delete: function(toDelete) {
+            var objectStore = this.db.transaction(this.objectStoreName(), "readwrite").objectStore(this.objectStoreName());
+            var request = objectStore.delete(this.getKey(toDelete));
+            var that = this;
+            request.onsuccess = function(event) {
+                that.fire('iron-signal', {
+                    name: 'rookscore-db-changed',
+                    data: event.detail
+                });
+            };
+
+        }
+
+
+    };
+</script>

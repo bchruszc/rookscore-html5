@@ -1,0 +1,225 @@
+<dom-module id="rookscore-styles">
+    <template>
+        <style is="custom-style">
+            @media (max-width: 720px) {
+                div {
+                    @apply(--paper-font-body1)
+                }
+            }
+            
+            @media (min-width: 720px) {
+                div {
+                    @apply(--paper-font-body1)
+                }
+            }
+            
+            @media (max-width: 720px) {
+                .rookscore-main-content {
+                    margin-top: 5px;
+                    margin-left: 5px;
+                    margin-right: 5px;
+                    margin-bottom: 5px;
+                    background-color: white;
+                    padding: 4px;
+                    @apply(--layout-vertical);
+                    @apply(--layout-flex);
+                }
+            }
+            
+            @media (min-width: 720px) {
+                .rookscore-main-content {
+                    margin-top: 20px;
+                    margin-left: 40px;
+                    margin-right: 80px;
+                    margin-bottom: 40px;
+                    background-color: white;
+                    padding: 10px;
+                    @apply(--layout-vertical);
+                    @apply(--layout-flex);
+                }
+            }
+            
+            .rookscore-dialog-content {
+                margin-top: 5px;
+                margin-left: 5px;
+                margin-right: 5px;
+                margin-bottom: 5px;
+                background-color: white;
+                padding: 4px;
+                @apply(--layout-vertical);
+                @apply(--layout-flex);
+            }
+            
+            .rookscore-fab {
+                position: fixed;
+                bottom: 16px;
+                right: 16px;
+            }
+            
+            .rookscore-list-item {
+                padding: 2px;
+                border-bottom-style: solid;
+                border-bottom-width: 1px;
+                border-bottom-color: #f5f5f5;
+            }
+            
+            .rookscore-scoreboard-row {
+                @apply(--layout-horizontal);
+                padding: 2px;
+                text-align: center;
+                border-bottom-style: solid;
+                border-bottom-width: 1px;
+                border-bottom-color: #f5f5f5;
+            }
+            
+            .rookscore-scoreboard-row-container {
+                @apply(--layout-vertical);
+            }
+            
+            .rookscore-scoresheet-header-item {
+                @apply(--layout-flex);
+                @apply(--layout-vertical);
+            }
+            
+            @media (max-width: 720px) {
+                .rookscore-scoresheet-summary-column {
+                    width: 75px;
+                    padding: 2px;
+                    @apply(--layout-horizontal);
+                    @apply(--layout-end-justified);
+                }
+                .rookscore-scoresheet-successful-bid {
+                    width: 75px;
+                    background: linear-gradient(to right, rgba(0,0,0,0), green);
+                    border-radius: 3px;
+                    padding-left: 2px;
+                    padding-right: 2px;
+                    padding-top: 3px;
+                    padding-bottom: 3px;
+
+                }
+                .rookscore-scoresheet-failed-bid {
+                    width: 75px;
+                    background: linear-gradient(to right, rgba(0,0,0,0), red);
+                    border-radius: 3px;
+                    padding-left: 2px;
+                    padding-right: 2px;
+                    padding-top: 3px;
+                    padding-bottom: 3px;
+
+                }
+                .rookscore-scoresheet-hand-number-column {
+                    width: 20px;
+                    @apply(--layout-vertical);
+                    @apply(--layout-center-justified);
+                }
+                .rookscore-scoresheet-header-item {
+                    @apply(--layout-flex);
+                    @apply(--layout-vertical);
+                    @apply(--layout-center);
+                }
+            }
+            
+            @media (min-width: 720px) {
+                .rookscore-scoresheet-summary-column {
+                    width: 150px;
+                    padding: 2px;
+                    @apply(--layout-horizontal);
+                    @apply(--layout-end-justified);
+                }
+                .rookscore-scoresheet-successful-bid {
+                    width: 150px;
+                    background: linear-gradient(to right, rgba(0,0,0,0), green);;
+                    border-radius: 3px;
+                    padding-left: 2px;
+                    padding-right: 2px;
+                    padding-top: 10px;
+                    padding-bottom: 10px;
+                }
+                .rookscore-scoresheet-failed-bid {
+                    width: 150px;
+                    background: linear-gradient(to right, rgba(0,0,0,0), red);
+                    border-radius: 3px;
+                    padding-left: 2px;
+                    padding-right: 2px;
+                    padding-top: 10px;
+                    padding-bottom: 10px;
+
+                }
+                .rookscore-scoresheet-header-item {
+                    @apply(--layout-flex);
+                    @apply(--layout-vertical);
+                    @apply(--layout-center);
+
+                }
+            }
+            
+            .rookscore-scoresheet-item {
+                @apply(--layout-flex);
+                @apply(--layout-vertical);
+                @apply(--layout-center-justified);
+            }
+            
+            .rookscore-scoresheet-divider-line {
+                text-align: center;
+                @apply(--layout-center);
+            }
+            
+            .rookscore-round-editor-player-selection-item {
+                @apply(--layout-flex);
+                margin: 5px;
+                text-align: center;
+            }
+            
+            .rookscore-round-editor-section-label {
+                font-weight: bold;
+            }
+            
+            .rookscore-titlebar-navlocation {
+                @apply(--layout-flex);
+            }
+            
+            .rookscore-titlebar-title {}
+            
+            .rookscore-badged-item {
+                @apply(--layout-flex);
+                @apply(--layout-horizontal);
+                @apply(--layout-center);
+                padding: 5px;
+            }
+            
+            .rookscore-badge-container {
+                width: 40px;
+                height: 40px;
+            }
+            
+            ;
+            .rookscore-badge-label {
+                @apply(--layout-flex);
+                padding-left: 20px;
+            }
+            
+            .rookscore-badged-item-selected {
+                font-weight: bold;
+            }
+            
+            .rookscore-dialog {
+                width: 80vw;
+            }
+            
+            ;
+            :root {
+                --rookscore-badge {
+                    --rookscore-badge-dimension: 20px;
+                    --paper-badge-width: 40px;
+                    --paper-badge-height: 40px;
+                    --paper-badge: {
+                        font-size: 16px;
+                        text-align: center;
+                    }
+                }
+                ;
+            }
+        </style>
+    </template>
+</dom-module>

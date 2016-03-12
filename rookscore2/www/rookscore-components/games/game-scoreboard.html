@@ -1,0 +1,201 @@
+<link rel="import" href="../../rookscore-styles.html">
+<link rel="import" href="../../imports.html">
+
+<dom-module id="game-scoreboard">
+
+
+
+    <style include="rookscore-styles">
+        .rookscore-scoresheet-row-selected {
+            background-color: #f5f5f5;
+        }
+    </style>
+
+
+    <template>
+
+        <rookscore-media-query wide="{{wide}}"></rookscore-media-query>
+
+
+
+        <div class="rookscore-scoreboard-row">
+
+
+            <template is="dom-if" if="{{wide}}">
+                <div class="rookscore-scoresheet-hand-number-column">{{buildHandNumberColumnLabel(wide)}}</div>
+            </template>
+
+
+
+
+            <template id="scoresheetHeader" is="dom-repeat" items="{{scoreboard.summary}}">
+                <div class="rookscore-scoresheet-header-item">
+
+                    <template is="dom-if" if="{{item.made_bid}}">
+                        <iron-icon icon="star"></iron-icon>
+                    </template>
+
+                    <template is="dom-if" if="{{!item.made_bid}}">
+                        <div class="flex"></div>
+                    </template>
+
+
+                    <template is="dom-if" if="{{wide}}">
+                        <div>
+                            <span>{{item.player.first_name}}</span> <span>{{item.player.last_name}}</span>
+                        </div>
+
+                    </template>
+
+                    <template is="dom-if" if="{{!wide}}">
+                        <span>{{buildPlayerInitials(item.player)}}</span>
+                    </template>
+
+                </div>
+        </div>
+        </template>
+
+
+        <!-- fixed-size column to display round summary -->
+        <div class="rookscore-scoresheet-summary-column">
+            <content></content>
+
+        </div>
+        </div>
+
+        <iron-list id="roundList" items="{{scoreboard.rounds}}" class="flex" selection-enabled selected-items="{{selectedRounds}}">
+            <template>
+
+                <div class="rookscore-scoreboard-row-container" class$="[[computedScoresheetRowClass(selected)]]">
+                    <template is="dom-if" if="{{shouldDrawDividerLine(index, item)}}">
+                        <div class="rookscore-scoresheet-divider-line">Dealer divider line</div>
+                    </template>
+                    <div class="rookscore-scoreboard-row">
+
+
+                        <template is="dom-if" if="{{wide}}">
+                            <div class="rookscore-scoresheet-hand-number-column">
+                                <span>{{computeHandNumber(index, item)}}</span>
+                            </div>
+                        </template>
+
+                        <template is="dom-repeat" items="{{item.scores}}">
+                            <div class="rookscore-scoresheet-item">
+                                <span>{{item}}</span>
+                            </div>
+                        </template>
+
+                        <div class="rookscore-scoresheet-summary-column" class$="{{computeRoundClass(item)}}">{{buildRoundSummaryText(item)}}</div>
+
+                    </div>
+                </div>
+            </template>
+        </iron-list>
+
+
+
+    </template>
+
+    <script>
+        Polymer({
+            is: "game-scoreboard",
+
+            properties: {
+                players: {
+                    type: Array,
+                },
+
+                scoreboard: {
+                    type: Object
+                },
+
+                selectedRounds: {
+                    type: Array,
+                    notify: true
+                }
+            },
+
+
+            shouldDrawDividerLine: function(index) {
+                return index != 0 && index < this.scoreboard.rounds.length - 1 && (this.scoreboard.rounds.length - index) % this.players.length == 0;
+            },
+
+            computeRoundClass: function(round) {
+                if (round.bid.points_made >= round.bid.points_bid) {
+                    return "rookscore-scoresheet-successful-bid";
+                }
+                else {
+                    return "rookscore-scoresheet-failed-bid";
+                }
+
+            },
+
+            computedScoresheetRowClass: function(selected) {
+                if (selected) {
+                    return "rookscore-scoresheet-row-selected";
+                }
+                else {
+                    return "";
+                }
+            },
+
+            computeHandNumber: function(index) {
+                return this.scoreboard.rounds.length - index;
+            },
+
+            buildHandNumberColumnLabel: function() {
+                return this.wide ? "Hand" : "#";
+            },
+
+            buildRoundSummaryText: function(round) {
+
+                var callingPlayer = this.findPlayerWithID(round.bid.caller);
+                var partners = [];
+                for (var i = 0; i < round.bid.partners.length; i++) {
+                    partners.push(this.findPlayerWithID(round.bid.partners[i]));
+                }
+
+                var roundSummary = "";
+
+                if (callingPlayer) {
+                    roundSummary += this.buildPlayerInitials(callingPlayer);
+                    roundSummary += " (" + round.bid.points_bid + ") ";
+
+                    for (var i = 0; i < partners.length; i++) {
+                        roundSummary += this.buildPlayerInitials(partners[i]);
+                        if (i < partners.length - 1) {
+                            roundSummary += ", "
+                        }
+                    }
+
+                    roundSummary += " " + round.bid.points_made;
+                }
+
+                return roundSummary;
+            },
+
+            buildPlayerInitials: function(player) {
+                var initials = "";
+
+                if (player.first_name) {
+                    initials += player.first_name.charAt(0).toUpperCase();
+                }
+
+                if (player.last_name) {
+                    initials += player.last_name.charAt(0).toUpperCase();
+                }
+
+                return initials;
+            },
+
+            findPlayerWithID: function(id) {
+                for (var i = 0; i < this.players.length; i++) {
+                    if (this.players[i].id == id) {
+                        return this.players[i];
+                    }
+                }
+            }
+        });
+    </script>
+
+</dom-module>

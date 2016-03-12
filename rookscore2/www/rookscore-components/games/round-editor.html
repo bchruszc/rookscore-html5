@@ -1,0 +1,255 @@
+<link rel="import" href="../../rookscore-styles.html">
+<link rel="import" href="../../imports.html">
+
+<dom-module id="round-editor">
+
+    <style include="rookscore-styles">
+        paper-listbox /deep/ .selectable-content {
+            @apply(--layout-horizontal);
+            @apply(--layout-center-justified);
+        }
+        
+        :host {
+            @apply(--layout-vertical);
+            --paper-item-selected: {
+                @apply(--shadow-elevation-2dp);
+                background-color: transparent;
+            }
+            ;
+            --paper-item-focused: {
+                background-color: transparent;
+            }
+            ;
+            --paper-item-focused-before: {
+                background-color: transparent;
+            }
+            --paper-item: {
+                @apply(--layout-horizontal);
+                @apply(--layout-flex);
+                padding: 0px;
+                @apply(--shadow-elevation-6dp);
+            }
+            --paper-listbox: {
+                padding: 0px;
+            }
+            --paper-menu-button: {
+                padding: 0px;
+            }
+        }
+        
+        .rookscore-point-selector {
+            margin-top: 20px
+        }
+    </style>
+
+
+    <template>
+        <rookscore-media-query wide="{{wide}}"></rookscore-media-query>
+
+        <div class="rookscore-round-editor-section-label">Select the caller</div>
+
+        <paper-listbox id="callerList" selected="{{selectedCallerIndex}}">
+            <template is="dom-repeat" items="{{players}}" as="player">
+                <paper-item class="rookscore-round-editor-player-selection-item">
+                    <span class="flex">{{buildPlayerNameText(player)}}</span>
+                </paper-item>
+            </template>
+        </paper-listbox>
+
+
+        <points-selector id="bidAmountSelector" class="rookscore-point-selector" value="{{bidAmount}}">
+            <div class="rookscore-round-editor-section-label">Score bid: <span>{{bidAmount}}</span></div>
+        </points-selector>
+
+
+        <div class="rookscore-round-editor-section-label">Select the partners</div>
+
+        <paper-listbox id="partnerList" multi selected-values="{{selectedPartnerIndices}}">
+            <template is="dom-repeat" items="{{players}}" as="player">
+                <paper-item class="rookscore-round-editor-player-selection-item">
+                    <span class="flex">{{buildPlayerNameText(player)}}</span></paper-item>
+            </template>
+        </paper-listbox>
+
+        <points-selector id="scoreMadeSelector" class="rookscore-point-selector" value="{{madeAmount}}">
+            <div class="rookscore-round-editor-section-label">Score made: <span>{{madeAmount}}</span> (Lost: <span>{{computeMadeDifferential(bidAmount, madeAmount)}}</span>)</div>
+        </points-selector>
+
+
+
+    </template>
+
+
+    <script>
+        Polymer({
+            is: "round-editor",
+
+            properties: {
+                players: Array,
+                bidAmount: Number,
+                madeAmount: Number,
+                selectedPartnerIndices: {
+                    type: Array
+                },
+                selectedCallerIndex: Number,
+                round: {
+                    type: Object,
+                    notify: true,
+                },
+
+                partnerSelectionHistory: {
+                    type: Array,
+                    value: function() {
+                        return []
+                    }
+                },
+
+                maxPartners: {
+                    type: Number,
+                    value: 1
+                }
+
+            },
+
+            observers: [
+                'roundInputsChanged(players, bidAmount, madeAmount, selectedPartnerIndices.*, selectedCallerIndex)',
+                'roundChanged(round, players)'
+            ],
+
+            listeners: {
+                'iron-select': 'selectionChanged',
+                'iron-deselect': 'selectionChanged'
+            },
+
+            selectionChanged: function(e) {
+
+
+                if (e.srcElement == this.$.partnerList) {
+                    var newIndex = this.$.partnerList.indexOf(e.detail.item);
+
+                    if (e.type === 'iron-deselect') {
+                        var curPosition = this.partnerSelectionHistory.indexOf(newIndex);
+                        if (curPosition >= 0) {
+                            this.partnerSelectionHistory.splice(curPosition, 1);
+                        }
+                    }
+                    else if (e.type === 'iron-select') {
+                        //there is a new item selected
+                        if (newIndex >= 0) {
+                            var curPosition = this.partnerSelectionHistory.indexOf(newIndex);
+                            if (curPosition >= 0) {
+                                this.partnerSelectionHistory.splice(curPosition, 1);
+                            }
+                            else if (this.partnerSelectionHistory.length == this.maxPartners) {
+                                //remove and deselect
+                                var toDeselect = this.partnerSelectionHistory.splice(0, 1)[0];
+                                this.$.partnerList.select(toDeselect);
+                            }
+
+                            this.partnerSelectionHistory.push(newIndex);
+                        }
+                    }
+                }
+            },
+
+            ready: function() {
+                this.reset();
+            },
+
+            reset: function() {
+                this.selectedPartnerIndices = [];
+                this.selectedCallerIndex = -1;
+                this.bidAmount = 150;
+                this.madeAmount = 150;
+                this.$.bidAmountSelector.reset();
+                this.$.scoreMadeSelector.reset();
+                
+            },
+
+            roundChanged: function() {
+                this.selectedPartnerIndexes = [];
+                for (var i = 0; i < this.players.length; i++) {
+
+                    if (this.players[i].id == this.round.caller) {
+                        this.selectedCallerIndex = i;
+                    }
+
+                    if (this.round.partners.indexOf(this.players[i].id) >= 0) {
+                        this.selectedPartnerIndexes.push(i);
+                    }
+                }
+
+                this.bidAmount = this.round.points_bid;
+                this.madeAmount = this.round.points_made;
+            },
+
+            roundInputsChanged: function() {
+                if (this.selectedPartnerIndices) {
+                    var partnerIds = [];
+                    var opponentIds = [];
+
+                    for (var i = 0; i < this.players.length; i++) {
+                        if (this.selectedCallerIndex != i) {
+                            if (this.selectedPartnerIndices.indexOf(i) >= 0) {
+                                partnerIds.push(this.players[i].id)
+                            }
+                            else {
+                                opponentIds.push(this.players[i].id);
+                            }
+                        }
+                    }
+                }
+
+
+
+                if (this.selectedCallerIndex >= 0) {
+                    var callerId = this.players[this.selectedCallerIndex].id;
+                }
+
+
+                if (this.bidAmount >= 0 && this.madeAmount >= 0 && partnerIds && opponentIds && callerId >= 0) {
+                    this.round = {
+                        caller: callerId,
+                        partners: partnerIds,
+                        opponents: opponentIds,
+                        points_bid: this.bidAmount,
+                        points_made: this.madeAmount
+                    };
+                }
+                else {
+                    this.round = undefined;
+                }
+
+            },
+
+            buildPlayerNameText: function(player) {
+                if (this.wide) {
+                    return player.first_name + " " + player.last_name;
+                }
+                else {
+                    return this.buildPlayerInitials(player);
+                }
+            },
+
+            buildPlayerInitials: function(player) {
+                var initials = "";
+
+                if (player.first_name) {
+                    initials += player.first_name.charAt(0).toUpperCase();
+                }
+
+                if (player.last_name) {
+                    initials += player.last_name.charAt(0).toUpperCase();
+                }
+
+                return initials;
+            },
+
+            computeMadeDifferential: function() {
+                return 180 - this.madeAmount;
+            }
+
+
+        })
+    </script>
+</dom-module>
